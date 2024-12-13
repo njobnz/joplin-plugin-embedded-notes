@@ -1,0 +1,51 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - release
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get manifest
+        id: manifest
+        uses: ActionsTools/read-json-action@main
+        with:
+          file_path: "src/manifest.json"
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build release
+        run: npm run dist
+
+      - name: Publish release
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Upload release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: publish/${{ steps.manifest.outputs.id }}.jpl
+          asset_name: ${{ steps.manifest.outputs.id }}-v${{ steps.manifest.outputs.version }}.jpl
+          release_name: v${{ steps.manifest.outputs.version }}
+          tag: v${{ steps.manifest.outputs.version }}
+          overwrite: true

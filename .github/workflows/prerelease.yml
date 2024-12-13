@@ -1,0 +1,59 @@
+name: Build Pre-release
+
+on:
+  push:
+    tags:
+      - alpha
+      - beta
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get date
+        id: date
+        uses: Kaven-Universe/github-action-current-date-time@v1
+        with:
+          format: "YYYYMMDDHHmmss"
+
+      - name: Get manifest
+        id: manifest
+        uses: ActionsTools/read-json-action@main
+        with:
+          file_path: "src/manifest.json"
+
+      - name: Generate version
+        id: version
+        uses: prompt/actions-commit-hash@v3
+        with:
+          prefix: ${{ steps.manifest.outputs.version }}-${{ github.ref_name }}+${{ steps.date.outputs.time }}.
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build release
+        run: npm run dist
+
+      - name: Upload release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: publish/${{ steps.manifest.outputs.id }}.jpl
+          asset_name: ${{ steps.manifest.outputs.id }}-v${{ steps.version.outputs.short }}.jpl
+          release_name: v${{ steps.version.outputs.short }}
+          tag: v${{ steps.version.outputs.short }}
+          overwrite: true
