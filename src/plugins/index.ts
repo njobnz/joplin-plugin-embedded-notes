@@ -1,6 +1,7 @@
 import joplin from 'api';
 import MarkdownIt from 'markdown-it';
 import { ContentScriptType } from 'api/types';
+import { EmbeddableNote } from '../types';
 import { registerSettings } from '../settings';
 import { getSettings as settings } from '../utils/getSettings';
 import { loadEmbeddableNotes } from '../modules/loadEmbeddableNotes';
@@ -27,28 +28,25 @@ export namespace App {
   const getEmbeddedLinks = async () => {
     const note = await joplin.workspace.selectedNote();
     const tokens = await fetchEmbeddableNotes(note, ['id', 'title']);
-    const header = `${getLargestNoteHeader(note)} ${settings().embeddedLinksHeader}`;
-    const body = generateEmbeddedLinksList(tokens);
     return {
-      head: md.render(header),
-      body: md.render(body),
+      head: md.render(generateEmbeddedLinksHead(note, settings().embeddedLinksHeader)),
+      body: md.render(generateEmbeddedLinksList(tokens)),
     };
   };
 
-  const getLargestNoteHeader = (note: any) => {
-    const headers = note.body.match(/^#{1,6}(?=\s)/gm);
-    return headers ? '#'.repeat(Math.min(...headers.map(h => h.length))) : '#';
+  const generateEmbeddedLinksHead = (note: any, header: string) => {
+    if (!header || /^#{1,6}(?=\s)/.test(header)) return header;
+    const headers = note.body.match(/^#{1,6}(?=\s)/gm) || [];
+    const largest = headers.length ? '#'.repeat(Math.min(...headers.map(h => h.length))) : '#';
+    return `${largest} ${header}`;
   };
 
-  const generateEmbeddedLinksList = (tokens: any) => {
-    const seen = new Set<string>();
-    let text = '';
-    tokens.forEach(token => {
-      if (seen.has(token.note.id)) return;
-      seen.add(token.note.id);
-      text += `- [${token.note.title}](:/${token.note.id})\n`;
-    });
-    return text;
+  const generateEmbeddedLinksList = (tokens: Map<string, EmbeddableNote>) => {
+    const seen = new Set();
+    return Array.from(tokens.values())
+      .filter(token => !seen.has(token.note.id) && seen.add(token.note.id))
+      .map((token, index) => `${index + 1}. [${token.note.title}](:/${token.note.id})`)
+      .join('\n');
   };
 
   const onMessageHandler = async (message: any) => {
