@@ -29,7 +29,7 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
 
     const first = match.text[prefix.length];
     const opening = new RegExp(`^[${escape(r[0] + r[2] + r[4])}]`).test(first) ? first : '';
-    const closing = brackets[opening] ?? '';
+    const closing = brackets.get(opening) ?? '';
 
     const tokens = await _context.postMessage({
       command: getFilteredTokensCmd,
