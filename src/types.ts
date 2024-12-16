@@ -10,6 +10,7 @@ export interface PluginSettings {
   renderMarkdown: boolean;
   rendererTags: string[];
   embeddedLinksHeader: string;
+  autocompleteKey: string;
 }
 
 export interface EmbeddableNote {

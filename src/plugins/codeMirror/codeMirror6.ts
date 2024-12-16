@@ -8,6 +8,20 @@ import { escapeRegEx as escape } from '../../utilities';
 import { getSettings as settings } from '../../utils/getSettings';
 
 export default async (CodeMirror: any, _context: ContentScriptContext) => {
+  let isKeyHeld = false;
+
+  const setupKeyListeners = (key: string = 'ControlLeft') => {
+    if (!key) return;
+
+    window.addEventListener('keyup', event => {
+      if (event.code === key) isKeyHeld = false;
+    });
+
+    window.addEventListener('keydown', event => {
+      if (event.code === key) isKeyHeld = true;
+    });
+  };
+
   const { autocompletion, insertCompletionText } =
     require('@codemirror/autocomplete') as typeof CodeMirrorAutocompleteType;
 
@@ -42,8 +56,7 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
 
     const createApplyCompletionFn = (noteTitle: string, noteId: string) => {
       return (view: EditorView, _completion: Completion, from: number, to: number) => {
-        // TODO: Add custom keybind to insert note id from autocomplete dropdown
-        const tokenName = idOnly ? noteId : noteTitle;
+        const tokenName = isKeyHeld ? (idOnly ? noteTitle : noteId) : idOnly ? noteId : noteTitle;
         const tokenText = `${prefix}${opening}${tokenName}${closing}${suffix}`;
         view.dispatch(insertCompletionText(view.state, tokenText, from, to));
       };
@@ -73,4 +86,6 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
     extension,
     autocompletion({ tooltipClass: () => 'embedded-notes-autocompletion' }),
   ]);
+
+  setupKeyListeners(settings().autocompleteKey);
 };

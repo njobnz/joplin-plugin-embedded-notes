@@ -24,6 +24,8 @@ interface AppLocalization {
   setting__rendererTags__description: string;
   setting__embeddedLinksHeader: string;
   setting__embeddedLinksHeader__description: string;
+  setting__autocompleteKey: string;
+  setting__autocompleteKey__description: string;
 }
 
 const defaultStrings: AppLocalization = {
@@ -59,6 +61,9 @@ const defaultStrings: AppLocalization = {
   setting__embeddedLinksHeader: 'Embedded links header',
   setting__embeddedLinksHeader__description:
     'Text to display as the header of the embedded links footer block.',
+  setting__autocompleteKey: 'Token type key',
+  setting__autocompleteKey__description:
+    'Assign a hotkey to change the token type (note title or note ID) when using autocomplete.',
 };
 
 const localizations: Record<string, AppLocalization> = {

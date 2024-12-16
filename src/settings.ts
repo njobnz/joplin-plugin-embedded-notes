@@ -124,6 +124,17 @@ export const registerSettings = async () => {
       value: 'Embeddings',
       advanced: true,
     },
+
+    autocompleteKey: {
+      public: true,
+      section: sectionName,
+      storage: SettingStorage.File,
+      label: localization.setting__autocompleteKey,
+      description: localization.setting__autocompleteKey__description,
+      type: SettingItemType.String,
+      value: 'ControlLeft',
+      advanced: true,
+    },
   };
 
   /**
