@@ -152,8 +152,10 @@ function processTokens(token: any, embeddings: Record<string, EmbeddableNote>): 
   let found: boolean = false;
   const updateRenderer = renderer => {
     if (found) return;
-    found = true;
-    result = renderer;
+    if (JSON.stringify(result) !== JSON.stringify(renderer)) {
+      result = renderer;
+      found = true;
+    }
   };
 
   token.content = replaceTokens(token.content, embeddings, updateRenderer);
