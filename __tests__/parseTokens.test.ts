@@ -6,22 +6,18 @@ describe('Extract valid tokens from an input string', () => {
     { p: '{{', s: '}}', a: '(', b: ')', c: '[', d: ']', e: '/', f: '/' },
   ];
 
-  testTags.forEach(async ({ p, s, a, b, c, d, e, f }, i) => {
+  testTags.forEach(({ p, s, a, b, c, d, e, f }, i) => {
     const testText = [
       {
-        input: `baz${p}foo${s} bar${p}${p}baz foo${s}bar${s} ${p}foo ${p}bar baz${s} foo${s}`,
-        expected: [`foo`, `baz foo`, `bar baz`],
+        input: `baz${p}foo${s} bar${p[0]}${p}${e}baz foo${f}${s}${s[0]}${p}${p}b${p[0]}r f${s[0]}o${s}foo${s}`,
+        expected: [`foo`, `${e}baz foo${f}`, `b${p[0]}r f${s[0]}o`],
       },
       {
-        input: `${p}a${s}bar${p}b${s}${p}foo${s}${p}foo bar${s}baz${s}`,
-        expected: [`a`, `b`, `foo`, `foo bar`],
+        input: `${p}${a}a${b}${s} ${p}${c}b${d}${s} ${p}${e}c${f}${s} ${p}${e}${e}d${f}${f}${s}`,
+        expected: [`${a}a${b}`, `${c}b${d}`, `${e}c${f}`, `${e}${e}d${f}${f}`],
       },
       {
-        input: `${p}${a}a${b}${s} ${p}${c}b${d}${s} ${p}${e}c${f}${s}`,
-        expected: [`${a}a${b}`, `${c}b${d}`, `${e}c${f}`],
-      },
-      {
-        input: `${p}foo${s[0]}bar${s} ${p}foo${p[0]}bar${s} ${p} foo${s} ${p}bar ${s}`,
+        input: `${p} foo${s} bar${p} baz foo ${s} bar ${p}baz ${s}`,
         expected: [],
       },
       {
@@ -29,16 +25,21 @@ describe('Extract valid tokens from an input string', () => {
         expected: [],
       },
       {
-        input: `${p}${s} ${p} ${s} ${p}  ${s}`,
-        expected: [],
+        input: `test${p}${s}${p}foo${s} ${p}foo bar${s} ${p} ${s} ${p}  ${s}`,
+        expected: ['foo', 'foo bar'],
+      },
+      {
+        // Ambiguous token handling
+        input: `${p}foo${p}foo bar${s}`,
+        expected: p === s ? ['foo', 'foo bar'] : ['foo bar'],
       },
     ];
 
-    testText.forEach(async ({ input, expected }, j) => {
+    testText.forEach(({ input, expected }, j) => {
       it(`should correctly extract valid tokens between '${p}' and '${s}' from test text ${
         j + 1
-      }`, async () => {
-        const result = await parseTokens(input, p, s);
+      }`, () => {
+        const result = parseTokens(input, p, s);
         expect(result).toEqual(expected);
       });
     });
