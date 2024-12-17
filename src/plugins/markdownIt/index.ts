@@ -2,7 +2,7 @@ import { EmbeddableNote, TokenRenderers } from '../../types';
 import { getEmbeddedLinksCmd } from '../../constants';
 import { readEmbeddableNotes } from '../../modules/readEmbeddableNotes';
 import { getSettings as settings } from '../../utils/getSettings';
-import { escapeRegEx } from '../../utilities';
+import { escapeRegEx as escape } from '../../utilities';
 
 let isRendering = false;
 
@@ -180,15 +180,13 @@ function replaceTokens(
   if (text) {
     // Replaces tokens in the order they appear in the string.
     // For ambiguous tokens, only the first one is replaced.
-    const sorted = Array.from(Object.keys(embeddings)).sort(
-      (a, b) => text.indexOf(a) - text.indexOf(b)
-    );
-
+    const filter = Object.keys(embeddings).filter(token => text.includes(token));
+    const sorted = filter.sort((a, b) => text.indexOf(a) - text.indexOf(b));
     sorted.forEach(item => {
       const embed = embeddings[item] ?? null;
       if (!embed) return;
       if (updateRenderer) updateRenderer(embed.info.renderer);
-      text = text.replace(new RegExp(escapeRegEx(item), 'g'), embed.note?.body || '');
+      text = text.replace(new RegExp(escape(item), 'g'), embed.note?.body || '');
     });
   }
   return text;
