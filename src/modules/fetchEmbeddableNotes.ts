@@ -23,7 +23,7 @@ export const fetchEmbeddableNotes = async (
   if (!note) return tokens;
 
   const { prefix, suffix, idOnly } = settings();
-  const result = await parseTokens(note.body, prefix, suffix);
+  const result = parseTokens(note.body, prefix, suffix);
   const notes = idOnly ? [] : await findEmbeddableNotes('', 0, fields);
 
   for (const key of result) {
