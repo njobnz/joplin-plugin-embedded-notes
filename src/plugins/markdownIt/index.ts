@@ -1,6 +1,7 @@
-import { getSettings as settings } from '../../utils/getSettings';
 import { EmbeddableNote, TokenRenderers } from '../../types';
-import { getEmbeddedLinksCmd, localStoreNotesKey } from '../../constants';
+import { getEmbeddedLinksCmd } from '../../constants';
+import { readEmbeddableNotes } from '../../modules/readEmbeddableNotes';
+import { getSettings as settings } from '../../utils/getSettings';
 
 let isRendering = false;
 
@@ -129,14 +130,6 @@ export default context => {
     },
   };
 };
-
-/**
- * Fetch the embeddable notes from local storage.
- *
- * @returns {Record<string, EmbeddableNote>} The embeddable notes from local storage
- */
-const readEmbeddableNotes = (): Record<string, EmbeddableNote> =>
-  JSON.parse(localStorage.getItem(localStoreNotesKey));
 
 /**
  * Replaces all tokens in a text string with their corresponding note
