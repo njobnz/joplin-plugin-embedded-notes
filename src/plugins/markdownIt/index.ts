@@ -143,9 +143,9 @@ export default context => {
  */
 function processTokens(token: any, embeddings: Record<string, EmbeddableNote>): TokenRenderers {
   let result = {
-    text: false,
-    inline: false,
     markdown: false,
+    inline: false,
+    text: false,
   };
 
   // Set renderer based on first found token
