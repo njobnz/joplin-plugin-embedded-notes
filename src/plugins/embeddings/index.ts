@@ -3,6 +3,7 @@ import { ViewHandle } from 'api/types';
 import { existsSync, readFileSync } from 'fs';
 import { EMBEDDED_LINKS_PANEL_EL, EMBEDDED_LINKS_PANEL_ID } from '../../constants';
 import localization from '../../localization';
+import debounce from '../../utils/debounce';
 import App from '..';
 
 export default class EmbeddingsView {
@@ -14,6 +15,11 @@ export default class EmbeddingsView {
     if (!app) throw Error('app cannot be null');
     this.app = app;
   }
+
+  onNoteChangeHandler = (e: any): void => {
+    if (e.event !== 2) return;
+    debounce(this.refresh, 500)();
+  };
 
   content = async (text: string = ''): Promise<string> => {
     const html = text && text !== '' ? text : this.app.renderer.render(localization.message__reloadPanel);
@@ -51,6 +57,7 @@ export default class EmbeddingsView {
   init = async (): Promise<void> => {
     this.setting = this.app.setting;
     await joplin.settings.onChange(this.refresh);
+    await joplin.workspace.onNoteChange(this.onNoteChangeHandler);
     await joplin.workspace.onNoteSelectionChange(this.refresh);
   };
 }

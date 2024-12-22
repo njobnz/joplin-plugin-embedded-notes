@@ -43,6 +43,35 @@ export default class App {
     return this.settings.get(name);
   };
 
+  onMessageHandler = async (message: any): Promise<any> => {
+    switch (message?.command) {
+      case GET_FILTERED_TOKENS_CMD:
+        return this.getFilteredTokens(message?.query);
+      case GET_EMBEDDED_LINKS_CMD:
+        return await this.getEmbeddedLinks(!!message?.isFound);
+      case GET_SETTING_CMD:
+        return await this.setting(message?.name);
+      case SET_SETTING_CMD:
+        return await this.setting(message?.name, message?.value);
+      case OPEN_NOTE_CMD:
+        try {
+          if (!message?.noteId) throw Error('Note ID is missing.');
+          return await joplin.commands.execute('openNote', message.noteId);
+        } catch (exception) {
+          console.error('Cannot open note:', exception, message);
+          return { error: 'Cannot open note:', exception, message };
+        }
+      default:
+        console.error('Unknown command:', message);
+        return { error: 'Unknown command:', message };
+    }
+  };
+
+  onNoteChangeHandler = (e: any): void => {
+    if (e.event !== 2) return;
+    loadEmbeddableNotes();
+  };
+
   getFilteredTokens = async (query: any): Promise<JoplinNote[]> => {
     const noteId = (await joplin.workspace.selectedNote())?.id;
     const tokens = await findEmbeddableNotes(query?.prefix, 10);
@@ -110,35 +139,6 @@ export default class App {
 
     const delimiter = type === EmbeddedLinksType.Delimited ? replaceEscape(await this.setting('listDelimiter')) : '\n';
     return links.join(delimiter);
-  };
-
-  onMessageHandler = async (message: any): Promise<any> => {
-    switch (message?.command) {
-      case GET_FILTERED_TOKENS_CMD:
-        return this.getFilteredTokens(message?.query);
-      case GET_EMBEDDED_LINKS_CMD:
-        return await this.getEmbeddedLinks(!!message?.isFound);
-      case GET_SETTING_CMD:
-        return await this.setting(message?.name);
-      case SET_SETTING_CMD:
-        return await this.setting(message?.name, message?.value);
-      case OPEN_NOTE_CMD:
-        try {
-          if (!message?.noteId) throw Error('Note ID is missing.');
-          return await joplin.commands.execute('openNote', message.noteId);
-        } catch (exception) {
-          console.error('Cannot open note:', exception, message);
-          return { error: 'Cannot open note:', exception, message };
-        }
-      default:
-        console.error('Unknown command:', message);
-        return { error: 'Unknown command:', message };
-    }
-  };
-
-  onNoteChangeHandler = (e: any): void => {
-    if (e.event !== 2) return;
-    loadEmbeddableNotes();
   };
 
   registerToggleEmbeddingsPanelCmd = async () => {
