@@ -26,14 +26,14 @@ export class EmbeddedNotes {
     });
   }
 
-  async fetchBacklinks(isFound: boolean): Promise<EmbeddedLinksContent> {
+  async fetchEmbeddings(isFound: boolean): Promise<EmbeddedLinksContent> {
     return webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
       command: GET_EMBEDDED_LINKS_CMD,
       isFound,
     });
   }
 
-  insertBacklinks(content: Element, heading: Element | null, backlinks: EmbeddedLinksContent): void {
+  insertEmbeddings(content: Element, heading: Element | null, backlinks: EmbeddedLinksContent): void {
     const { head = '', body = '', position = EmbeddedLinksPosition.None } = backlinks;
 
     if (heading) {
@@ -47,22 +47,22 @@ export class EmbeddedNotes {
     content.insertAdjacentHTML(insert, head + body);
   }
 
-  async writeBacklinks(): Promise<void> {
+  async writeEmbeddigs(): Promise<void> {
     const content = document.getElementById(this.contentId);
     if (!content) return;
 
     const name = (await this.fetchSetting<string>('listHeader')).replace(/^#{1,6}\s+/gm, '');
     const heading = document.getElementById(this.headerId) ?? this.findHeaderByName(name, content);
 
-    const backlinks = await this.fetchBacklinks(Boolean(heading));
-    if (backlinks.hide) return;
+    const embeddings = await this.fetchEmbeddings(Boolean(heading));
+    if (embeddings.hide) return;
 
-    this.insertBacklinks(content, heading, backlinks);
+    this.insertEmbeddings(content, heading, embeddings);
   }
 
   init(): void {
-    this.writeBacklinks();
-    document.addEventListener('joplin-noteDidUpdate', () => this.writeBacklinks());
+    this.writeEmbeddigs();
+    document.addEventListener('joplin-noteDidUpdate', () => this.writeEmbeddigs());
   }
 }
 
