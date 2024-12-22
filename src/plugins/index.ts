@@ -1,4 +1,5 @@
 import joplin from 'api';
+import { ToolbarButtonLocation } from 'api/types';
 import { EmbeddableNote, EmbeddedLinksContent, JoplinNote } from '../types';
 import {
   EmbeddedLinksPosition,
@@ -9,6 +10,7 @@ import {
   SET_SETTING_CMD,
   OPEN_NOTE_CMD,
 } from '../constants';
+import localization from '../localization';
 import escapeMarkdown from '../utils/escapeMarkdown';
 import replaceEscape from '../utils/replaceEscape';
 import loadEmbeddableNotes from '../modules/loadEmbeddableNotes';
@@ -139,11 +141,32 @@ export default class App {
     loadEmbeddableNotes();
   };
 
+  registerToggleEmbeddingsPanelCmd = async () => {
+    await joplin.commands.register({
+      name: 'toggleEmbeddingsPanel',
+      label: localization.command_toggleEmbeddingsPanel,
+      iconName: 'fas fa-laptop-code',
+      execute: async () => {
+        if (!this.panel) return;
+        await this.setting('showPanel', !(await this.setting('showPanel')));
+        this.panel.refresh();
+      },
+    });
+
+    await joplin.views.toolbarButtons.create(
+      'toggleEmbeddingsPanelToolbar',
+      'toggleEmbeddingsPanel',
+      ToolbarButtonLocation.NoteToolbar
+    );
+  };
+
   init = async (): Promise<void> => {
     await this.settings.init();
     await this.viewer.init();
     await this.editor.init();
     await this.panel.init();
+
+    await this.registerToggleEmbeddingsPanelCmd();
 
     await joplin.workspace.onNoteChange(this.onNoteChangeHandler);
     await joplin.workspace.onNoteSelectionChange(loadEmbeddableNotes);

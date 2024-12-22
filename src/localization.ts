@@ -38,6 +38,8 @@ interface AppLocalization {
   setting__customCss: string;
   setting__customCss__description: string;
 
+  command_toggleEmbeddingsPanel: string;
+
   message__reloadPanel: string;
 }
 
@@ -87,6 +89,8 @@ const defaultStrings: AppLocalization = {
   setting__rendererTags: 'Renderer tags',
   setting__rendererTags__description:
     'Customize the characters used for renderer tags. Change only if the default tags conflict with custom token tags. Enter a space-separated list of single-character tags in this order: markdown (open/close), inline markdown (open/close), and plain text (open/close). (default: ( ) [ ] { })',
+
+  command_toggleEmbeddingsPanel: 'Show/hide embedded links panel',
 
   message__reloadPanel: '# Embeddings\n\nSelect a note to load this panel.',
 };
