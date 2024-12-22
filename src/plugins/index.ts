@@ -81,7 +81,7 @@ export default class App {
   };
 
   getEmbeddedLinks = async (isFound: boolean = false, isPanel: boolean = false): Promise<EmbeddedLinksContent> => {
-    const result = {
+    const result: EmbeddedLinksContent = {
       position: EmbeddedLinksPosition.Footer,
       hide: true,
       head: '',
@@ -95,10 +95,18 @@ export default class App {
     if ((!isPanel && !note) || !note) return result;
 
     const notes = await fetchEmbeddableNotes(note, ['id', 'title']);
-
     result.hide = notes.size === 0;
-    result.head = this.renderer.render(this.generateEmbeddedLinksHead(note, await this.setting('listHeader')));
-    result.body = this.renderer.render(await this.generateEmbeddedLinksList(notes, await this.setting('listType')));
+
+    if (isPanel || !result.hide) {
+      const [delimiter, header, type] = await Promise.all([
+        this.setting('listDelimiter'),
+        this.setting('listHeader'),
+        this.setting('listType'),
+      ]);
+
+      result.head = this.renderer.render(this.generateEmbeddedLinksHead(note, header));
+      result.body = this.renderer.render(this.generateEmbeddedLinksList(notes, type, delimiter));
+    }
 
     return result;
   };
@@ -110,20 +118,17 @@ export default class App {
     return `${largest} ${header}`;
   };
 
-  generateEmbeddedLinksList = async (
+  generateEmbeddedLinksList = (
     tokens: Map<string, EmbeddableNote>,
-    type: EmbeddedLinksType = EmbeddedLinksType.Delimited
-  ): Promise<string> => {
+    type: EmbeddedLinksType = EmbeddedLinksType.Delimited,
+    delimiter: string = '\n'
+  ): string => {
     if (!tokens.size) return '';
-
-    const unique = Array.from(tokens.values()).filter(
-      (token, _, arr) => arr.findIndex(t => t.note.id === token.note.id) === arr.indexOf(token)
-    );
 
     const formatPrefix = (index: number): string => {
       switch (type) {
         case EmbeddedLinksType.Ordered:
-          return `${index + 1}. `;
+          return `${index}. `;
         case EmbeddedLinksType.Unordered:
           return '- ';
         default:
@@ -131,13 +136,15 @@ export default class App {
       }
     };
 
-    const links = await Promise.all(
-      unique.map(
-        async (token, index) => `${formatPrefix(index)}[${escapeMarkdown(token.note.title)}](:/${token.note.id})`
-      )
+    const unique = Array.from(tokens.values()).filter(
+      (token, _, arr) => arr.findIndex(t => t.note.id === token.note.id) === arr.indexOf(token)
     );
 
-    const delimiter = type === EmbeddedLinksType.Delimited ? replaceEscape(await this.setting('listDelimiter')) : '\n';
+    const links = unique.map(
+      (token, index) => `${formatPrefix(index + 1)}[${escapeMarkdown(token.note.title)}](:/${token.note.id})`
+    );
+
+    delimiter = type === EmbeddedLinksType.Delimited ? replaceEscape(delimiter) : '\n';
     return links.join(delimiter);
   };
 

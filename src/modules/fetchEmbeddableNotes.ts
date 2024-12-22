@@ -19,12 +19,12 @@ export default async (note: any, fields = ['id', 'title', 'body']): Promise<Map<
 
   if (!note) return tokens;
 
-  const { prefix, suffix, idOnly } = settings();
+  const { prefix, suffix, idOnly, rendererTags } = settings();
   const result = parseTokens(note.body, prefix, suffix);
   const notes = idOnly ? [] : await findEmbeddableNotes('', 0, fields);
 
   for (const key of result) {
-    const info = parseToken(key);
+    const info = parseToken(key, prefix, suffix, rendererTags);
     const { name, token } = info;
     const item =
       notes.find(i => i.id === name || i.title === name) || (validId(name) ? await fetchNoteById(name, fields) : null);
