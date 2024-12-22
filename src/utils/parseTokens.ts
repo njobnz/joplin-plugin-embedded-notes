@@ -7,7 +7,7 @@
  * @throws {Error} If the prefix or suffix is missing or invalid.
  * @returns {string[]} An array of unique token names.
  */
-export const parseTokens = (text: string, prefix: string, suffix: string): string[] => {
+export default (text: string, prefix: string, suffix: string): string[] => {
   if (!(prefix = prefix.trim()) || !(suffix = suffix.trim()))
     throw new Error('Token prefix or suffix cannot be empty.');
 

@@ -288,17 +288,23 @@ function resolveExtraScriptPath(name) {
 	const s = name.split('.');
 	s.pop();
 	const nameNoExt = s.join('.');
-
+	const isWebview = ['plugins/embeddings/assets/panel', 'plugins/markdownIt/assets/index'].some(page => nameNoExt.endsWith(page));
+	const target = isWebview ? 'web' : 'node';
 	return {
+		target,
 		entry: relativePath,
 		output: {
-			filename: `${nameNoExt}.js`,
-			path: distDir,
-			library: 'default',
-			libraryTarget: 'commonjs',
-			libraryExport: 'default',
+		  filename: `${nameNoExt}.js`,
+		  path: distDir,
+		  ...(!isWebview
+			? {
+				library: 'default',
+				libraryTarget: 'commonjs',
+				libraryExport: 'default',
+			  }
+			: {}),
 		},
-	};
+	  };
 }
 
 function buildExtraScriptConfigs(userConfig) {
@@ -308,8 +314,12 @@ function buildExtraScriptConfigs(userConfig) {
 
 	for (const scriptName of userConfig.extraScripts) {
 		const scriptPaths = resolveExtraScriptPath(scriptName);
-		output.push({ ...extraScriptConfig, entry: scriptPaths.entry,
-			output: scriptPaths.output });
+		output.push({
+			...extraScriptConfig, 
+			target: scriptPaths.target,
+			entry: scriptPaths.entry,
+			output: scriptPaths.output
+		});
 	}
 
 	return output;

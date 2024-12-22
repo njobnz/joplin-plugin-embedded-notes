@@ -35,6 +35,7 @@
     "@codemirror/view": "^6.35.2",
     "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.14",
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^18.7.13",
     "chalk": "^4.1.0",
     "copy-webpack-plugin": "^11.0.0",
@@ -50,6 +51,7 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
+    "delegate": "^3.2.0",
     "markdown-it": "^14.1.0"
   }
 }

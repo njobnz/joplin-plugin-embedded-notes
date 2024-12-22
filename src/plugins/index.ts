@@ -1,23 +1,47 @@
 import joplin from 'api';
-import MarkdownIt from 'markdown-it';
-import { ContentScriptType } from 'api/types';
-import { EmbeddableNote } from '../types';
-import { registerSettings } from '../settings';
-import { getSettings as settings } from '../utils/getSettings';
-import { loadEmbeddableNotes } from '../modules/loadEmbeddableNotes';
-import { findEmbeddableNotes } from '../modules/findEmbeddableNotes';
-import { fetchEmbeddableNotes } from '../modules/fetchEmbeddableNotes';
+import { EmbeddableNote, EmbeddedLinksContent, JoplinNote } from '../types';
 import {
-  markdownScriptId,
-  codeMirrorScriptId,
-  getFilteredTokensCmd,
-  getEmbeddedLinksCmd,
+  EmbeddedLinksPosition,
+  EmbeddedLinksType,
+  GET_FILTERED_TOKENS_CMD,
+  GET_EMBEDDED_LINKS_CMD,
+  GET_SETTING_CMD,
+  SET_SETTING_CMD,
+  OPEN_NOTE_CMD,
 } from '../constants';
+import escapeMarkdown from '../utils/escapeMarkdown';
+import replaceEscape from '../utils/replaceEscape';
+import loadEmbeddableNotes from '../modules/loadEmbeddableNotes';
+import findEmbeddableNotes from '../modules/findEmbeddableNotes';
+import fetchEmbeddableNotes from '../modules/fetchEmbeddableNotes';
+import AppSettings from './settings';
+import Renderer from './renderer';
+import MarkdownView from './markdownIt';
+import CodeMirrorView from './codeMirror';
+import EmbeddingsView from './embeddings';
 
-export namespace App {
-  const md = new MarkdownIt({ html: true });
+export default class App {
+  settings: AppSettings;
+  renderer: Renderer;
+  viewer: MarkdownView;
+  editor: CodeMirrorView;
+  panel: EmbeddingsView;
 
-  const getFilteredTokens = async (query: any) => {
+  constructor() {
+    this.settings = new AppSettings(this);
+    this.renderer = new Renderer(this);
+    this.viewer = new MarkdownView(this);
+    this.editor = new CodeMirrorView(this);
+    this.panel = new EmbeddingsView(this);
+  }
+
+  setting = async (name: string, value?: any): Promise<any> => {
+    if (!this.settings) throw Error('Settings not initialized.');
+    if (value !== undefined) return this.settings.set(name, value);
+    return this.settings.get(name);
+  };
+
+  getFilteredTokens = async (query: any): Promise<JoplinNote[]> => {
     const noteId = (await joplin.workspace.selectedNote())?.id;
     const tokens = await findEmbeddableNotes(query?.prefix, 10);
     const filter = tokens.filter(note => note.id !== noteId);
@@ -25,70 +49,103 @@ export namespace App {
     return filter;
   };
 
-  const getEmbeddedLinks = async () => {
-    const note = await joplin.workspace.selectedNote();
-    const tokens = await fetchEmbeddableNotes(note, ['id', 'title']);
-    return {
-      head: md.render(generateEmbeddedLinksHead(note, settings().embeddedLinksHeader)),
-      body: md.render(generateEmbeddedLinksList(tokens)),
+  getEmbeddedLinks = async (isFound: boolean = false, isPanel: boolean = false): Promise<EmbeddedLinksContent> => {
+    const result = {
+      position: EmbeddedLinksPosition.Footer,
+      hide: true,
+      head: '',
+      body: '',
     };
+
+    result.position = (await this.setting('listPosition')) as EmbeddedLinksPosition;
+    if (!isFound && result.position === EmbeddedLinksPosition.None) return result;
+
+    const note = (await joplin.workspace.selectedNote()) as JoplinNote;
+    if ((!isPanel && !note) || !note) return result;
+
+    const notes = await fetchEmbeddableNotes(note, ['id', 'title']);
+
+    result.hide = notes.size === 0;
+    result.head = this.renderer.render(this.generateEmbeddedLinksHead(note, await this.setting('listHeader')));
+    result.body = this.renderer.render(await this.generateEmbeddedLinksList(notes, await this.setting('listType')));
+
+    return result;
   };
 
-  const generateEmbeddedLinksHead = (note: any, header: string) => {
+  generateEmbeddedLinksHead = (note: any, header: string): string => {
     if (!header || /^#{1,6}(?=\s)/.test(header)) return header;
     const headers = note.body.match(/^#{1,6}(?=\s)/gm) || [];
     const largest = headers.length ? '#'.repeat(Math.min(...headers.map(h => h.length))) : '#';
     return `${largest} ${header}`;
   };
 
-  const generateEmbeddedLinksList = (tokens: Map<string, EmbeddableNote>) => {
-    const seen = new Set();
-    return Array.from(tokens.values())
-      .filter(token => !seen.has(token.note.id) && seen.add(token.note.id))
-      .map((token, index) => `${index + 1}. [${token.note.title}](:/${token.note.id})`)
-      .join('\n');
+  generateEmbeddedLinksList = async (
+    tokens: Map<string, EmbeddableNote>,
+    type: EmbeddedLinksType = EmbeddedLinksType.Delimited
+  ): Promise<string> => {
+    if (!tokens.size) return '';
+
+    const unique = Array.from(tokens.values()).filter(
+      (token, _, arr) => arr.findIndex(t => t.note.id === token.note.id) === arr.indexOf(token)
+    );
+
+    const formatPrefix = (index: number): string => {
+      switch (type) {
+        case EmbeddedLinksType.Ordered:
+          return `${index + 1}. `;
+        case EmbeddedLinksType.Unordered:
+          return '- ';
+        default:
+          return '';
+      }
+    };
+
+    const links = await Promise.all(
+      unique.map(
+        async (token, index) => `${formatPrefix(index)}[${escapeMarkdown(token.note.title)}](:/${token.note.id})`
+      )
+    );
+
+    const delimiter = type === EmbeddedLinksType.Delimited ? replaceEscape(await this.setting('listDelimiter')) : '\n';
+    return links.join(delimiter);
   };
 
-  const onMessageHandler = async (message: any) => {
+  onMessageHandler = async (message: any): Promise<any> => {
     switch (message?.command) {
-      case getFilteredTokensCmd:
-        return getFilteredTokens(message?.query);
-      case getEmbeddedLinksCmd:
-        return getEmbeddedLinks();
+      case GET_FILTERED_TOKENS_CMD:
+        return this.getFilteredTokens(message?.query);
+      case GET_EMBEDDED_LINKS_CMD:
+        return await this.getEmbeddedLinks(!!message?.isFound);
+      case GET_SETTING_CMD:
+        return await this.setting(message?.name);
+      case SET_SETTING_CMD:
+        return await this.setting(message?.name, message?.value);
+      case OPEN_NOTE_CMD:
+        try {
+          if (!message?.noteId) throw Error('Note ID is missing.');
+          return await joplin.commands.execute('openNote', message.noteId);
+        } catch (exception) {
+          console.error('Cannot open note:', exception, message);
+          return { error: 'Cannot open note:', exception, message };
+        }
       default:
-        console.error('Unknown command', message);
-        return { error: 'Unknown command', message };
+        console.error('Unknown command:', message);
+        return { error: 'Unknown command:', message };
     }
   };
 
-  const onNoteChangeHandler = async (e: any) => {
+  onNoteChangeHandler = (e: any): void => {
     if (e.event !== 2) return;
     loadEmbeddableNotes();
   };
 
-  const registerMarkdown = async () => {
-    await joplin.contentScripts.register(
-      ContentScriptType.MarkdownItPlugin,
-      markdownScriptId,
-      './plugins/markdownIt/index.js'
-    );
-    await joplin.contentScripts.onMessage(markdownScriptId, onMessageHandler);
-  };
+  init = async (): Promise<void> => {
+    await this.settings.init();
+    await this.viewer.init();
+    await this.editor.init();
+    await this.panel.init();
 
-  const registerCodeMirror = async () => {
-    await joplin.contentScripts.register(
-      ContentScriptType.CodeMirrorPlugin,
-      codeMirrorScriptId,
-      './plugins/codeMirror/index.js'
-    );
-    await joplin.contentScripts.onMessage(codeMirrorScriptId, onMessageHandler);
-  };
-
-  export async function init() {
-    await registerSettings();
-    await registerMarkdown();
-    await registerCodeMirror();
-    await joplin.workspace.onNoteChange(onNoteChangeHandler);
+    await joplin.workspace.onNoteChange(this.onNoteChangeHandler);
     await joplin.workspace.onNoteSelectionChange(loadEmbeddableNotes);
-  }
+  };
 }

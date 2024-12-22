@@ -1,11 +1,11 @@
 import joplin from 'api';
-import { fetchEmbeddableNotes } from './fetchEmbeddableNotes';
-import { localStoreNotesKey } from '../constants';
+import { LOCAL_STORE_NOTES_KEY } from '../constants';
+import fetchEmbeddableNotes from './fetchEmbeddableNotes';
 
 /**
  * Retrieves embeddable notes and saves them to localStorage.
  */
-export const loadEmbeddableNotes = async (): Promise<void> => {
+export default async (): Promise<void> => {
   const notes = await fetchEmbeddableNotes(await joplin.workspace.selectedNote());
-  localStorage.setItem(localStoreNotesKey, JSON.stringify(Object.fromEntries(notes)));
+  localStorage.setItem(LOCAL_STORE_NOTES_KEY, JSON.stringify(Object.fromEntries(notes)));
 };

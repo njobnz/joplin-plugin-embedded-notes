@@ -3,9 +3,9 @@ import type * as CodeMirrorAutocompleteType from '@codemirror/autocomplete';
 import type { CompletionContext, CompletionResult, Completion } from '@codemirror/autocomplete';
 import type { EditorView } from '@codemirror/view';
 import type { Extension } from '@codemirror/state';
-import { getFilteredTokensCmd } from '../../constants';
-import { escapeRegEx as escape } from '../../utilities';
-import { getSettings as settings } from '../../utils/getSettings';
+import { GET_FILTERED_TOKENS_CMD } from '../../constants';
+import settings from '../../utils/readSettings';
+import escape from '../../utils/escapeRegExp';
 
 export default async (CodeMirror: any, _context: ContentScriptContext) => {
   const { autocompletion, insertCompletionText } =
@@ -16,7 +16,7 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
 
     if (!autocomplete) return null;
 
-    const pattern = new RegExp(`${escape(prefix)}[^]*`);
+    const pattern = new RegExp(`${escape(prefix)}[^${escape(prefix)}]*`);
     const match = context.matchBefore(pattern);
 
     if (!match || (match.from === match.to && !context.explicit)) return null;
@@ -32,7 +32,7 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
     const closing = brackets.get(opening) ?? '';
 
     const tokens = await _context.postMessage({
-      command: getFilteredTokensCmd,
+      command: GET_FILTERED_TOKENS_CMD,
       query: {
         prefix: match.text.substring(prefix.length + (opening ? 1 : 0)),
       },
@@ -69,8 +69,5 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
     ? CodeMirror.joplinExtensions.completionSource(completeToken)
     : autocompletion({ override: [completeToken] });
 
-  CodeMirror.addExtension([
-    extension,
-    autocompletion({ tooltipClass: () => 'embedded-notes-autocompletion' }),
-  ]);
+  CodeMirror.addExtension([extension, autocompletion({ tooltipClass: () => 'embedded-notes-autocompletion' })]);
 };

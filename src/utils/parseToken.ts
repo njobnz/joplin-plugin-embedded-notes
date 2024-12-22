@@ -1,6 +1,6 @@
 import { TokenInfo, TokenRenderers } from '../types';
-import { escapeRegEx as escape } from '../utilities';
-import { getSettings as settings } from './getSettings';
+import escape from './escapeRegExp';
+import settings from './readSettings';
 
 /**
  * Parses a token and extracts its properties and modifiers,
@@ -10,7 +10,7 @@ import { getSettings as settings } from './getSettings';
  * @throws {Error} If the prefix or suffix is missing or invalid.
  * @returns {Object} An object containing the token name and renderer type.
  */
-export const parseToken = (tag): TokenInfo => {
+export default (tag: string): TokenInfo => {
   const { prefix, suffix, rendererTags: r } = settings();
   if (!prefix || !suffix) throw new Error('Token prefix or suffix cannot be empty.');
 

@@ -1,4 +1,4 @@
-import { parseTokens } from '../src/utils/parseTokens';
+import parseTokens from '../src/utils/parseTokens';
 
 describe('Extract valid tokens from an input string', () => {
   const testTags = [

@@ -7,7 +7,7 @@ import joplin from 'api';
  * @param {string[]} fields - An array of field names to include in the fetched note data.
  * @returns {Promise<any>} The note data with the specified fields.
  */
-export const fetchNoteById = async (noteId: string, fields: string[]): Promise<any> => {
+export default async (noteId: string, fields: string[]): Promise<any> => {
   try {
     return await joplin.data.get(['notes', noteId], { fields });
   } catch (error) {

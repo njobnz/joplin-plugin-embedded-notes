@@ -1,5 +1,5 @@
 import joplin from 'api';
-import { getSettings as settings } from '../utils/getSettings';
+import settings from '../utils/readSettings';
 
 /**
  * Fetches embeddable notes based on a search filter or tag and returns the specified fields.
@@ -13,11 +13,7 @@ import { getSettings as settings } from '../utils/getSettings';
  * @param {string[]} fields - Optional array of note fields to include in the response. Defaults to ['id', 'parent_id', 'title'] if not specified.
  * @returns {Promise<any[]>} An array of fetched notes.
  */
-export const findEmbeddableNotes = async (
-  filter: string = '',
-  limit: number = 0,
-  fields: string[] = null
-): Promise<any[]> => {
+export default async (filter: string = '', limit: number = 0, fields: string[] = null): Promise<any[]> => {
   const results: any[] = [];
 
   const fetchNotes = async (path: string[], query?: string): Promise<void> => {
