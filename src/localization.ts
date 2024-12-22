@@ -39,6 +39,7 @@ interface AppLocalization {
   setting__customCss__description: string;
 
   command_toggleEmbeddingsPanel: string;
+  command_createNoteWithEmbeddedContent: string;
 
   message__reloadPanel: string;
 }
@@ -91,6 +92,7 @@ const defaultStrings: AppLocalization = {
     'Customize the characters used for renderer tags. Change only if the default tags conflict with custom token tags. Enter a space-separated list of single-character tags in this order: markdown (open/close), inline markdown (open/close), and plain text (open/close). (default: ( ) [ ] { })',
 
   command_toggleEmbeddingsPanel: 'Show/hide embedded links panel',
+  command_createNoteWithEmbeddedContent: 'Create a new note with embedded content',
 
   message__reloadPanel: '# Embeddings\n\nSelect a note to load this panel.',
 };

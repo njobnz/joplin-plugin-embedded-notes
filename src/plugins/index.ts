@@ -16,6 +16,7 @@ import replaceEscape from '../utils/replaceEscape';
 import loadEmbeddableNotes from '../modules/loadEmbeddableNotes';
 import findEmbeddableNotes from '../modules/findEmbeddableNotes';
 import fetchEmbeddableNotes from '../modules/fetchEmbeddableNotes';
+import generateEmbeddedNote from '../modules/generateEmbeddedNote';
 import AppSettings from './settings';
 import Renderer from './renderer';
 import MarkdownView from './markdownIt';
@@ -167,6 +168,34 @@ export default class App {
     );
   };
 
+  registerCreateNoteWithEmbeddedContentCmd = async () => {
+    await joplin.commands.register({
+      name: 'createNoteWithEmbeddedContent',
+      label: localization.command_createNoteWithEmbeddedContent,
+      iconName: 'fas fa-file-code',
+      execute: async () => {
+        const note = (await joplin.workspace.selectedNote()) as JoplinNote;
+        if (!note) return;
+
+        const embeddings = await fetchEmbeddableNotes(note);
+        if (!embeddings) return;
+
+        const body = generateEmbeddedNote(note.body, embeddings);
+
+        await joplin.data.post(['notes'], null, { body, title: note.title, parent_id: note.parent_id });
+      },
+    });
+  };
+
+  createBacklinksMenus = async () => {
+    await joplin.views.menus.create('embeddedNotesMenu', 'Embedded notes', [
+      {
+        commandName: 'createNoteWithEmbeddedContent',
+        accelerator: 'Ctrl+Alt+E',
+      },
+    ]);
+  };
+
   init = async (): Promise<void> => {
     await this.settings.init();
     await this.viewer.init();
@@ -174,6 +203,8 @@ export default class App {
     await this.panel.init();
 
     await this.registerToggleEmbeddingsPanelCmd();
+    await this.registerCreateNoteWithEmbeddedContentCmd();
+    await this.createBacklinksMenus();
 
     await joplin.workspace.onNoteChange(this.onNoteChangeHandler);
     await joplin.workspace.onNoteSelectionChange(loadEmbeddableNotes);
