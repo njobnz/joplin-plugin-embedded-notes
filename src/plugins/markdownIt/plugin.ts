@@ -1,4 +1,5 @@
 import { EmbeddableNote, TokenRenderers } from '../../types';
+import { MARKDOWNIT_DISABLE_RULERS } from '../../constants';
 import readEmbeddableNotes from '../../modules/readEmbeddableNotes';
 import settings from '../../utils/readSettings';
 import escape from '../../utils/escapeRegExp';
@@ -33,14 +34,9 @@ export default (_context: any) => ({
             //
             // When markdownIt.render* is called, all active rules from other plugins
             // are processed, causing footer content to be re-rendered each time.
-            const disableRulers = [
-              'footnote_tail2', // https://github.com/ambrt/joplin-plugin-referencing-notes/blob/4469dd69ecb4eeed97bb270ebfa508448c2bbd2b/src/notesReferences.js#L43
-              'reference_list', // https://github.com/joplin/plugin-bibtex/blob/bfb9e2098d55b8061c43380fd581f6dd8d621d4b/src/ui/bibliography-renderer/render-list-content-script.ts#L12
-            ];
-
             try {
-              isRendering = true; // Prevent recursion when calling markdownIt.render
-              disableRulers.forEach(ruler => {
+              isRendering = true; // Prevent recursion when calling markdownIt.render*.
+              MARKDOWNIT_DISABLE_RULERS.forEach(ruler => {
                 markdownIt.core.ruler.disable(ruler, true);
               });
 
@@ -49,7 +45,7 @@ export default (_context: any) => ({
               console.error('Error rendering markdown:', error, tokens);
             } finally {
               isRendering = false;
-              disableRulers.forEach(ruler => {
+              MARKDOWNIT_DISABLE_RULERS.forEach(ruler => {
                 markdownIt.core.ruler.enable(ruler, true);
               });
             }
