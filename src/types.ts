@@ -8,6 +8,7 @@ export interface PluginSettings {
   prefix: string;
   suffix: string;
   blockFence: boolean;
+  disableText: string;
   renderMarkdown: boolean;
   rendererTags: string[];
   listPosition: EmbeddedLinksPosition;

@@ -9,6 +9,8 @@ import {
 } from '../constants';
 import localization from '../localization';
 import readSettings from '../utils/readSettings';
+import getSetting from '../utils/getSetting';
+import setSetting from '../utils/setSetting';
 import App from '.';
 
 /**
@@ -31,20 +33,14 @@ export default class AppSettings {
    *
    * @returns {Promise<any>} The setting value.
    */
-  get = async (name: string, fallback: any = null): Promise<any> => {
-    try {
-      return (await joplin.settings.values(name))[name];
-    } catch (e) {
-      return fallback;
-    }
-  };
+  get = getSetting;
 
   /**
    * Set a setting using Joplin API.
    *
    * @returns {Promise<any>} The setting value.
    */
-  set = async (name: string, value: any): Promise<void> => await joplin.settings.setValue(name, value);
+  set = setSetting;
 
   /**
    * Read settings from localStorage.
@@ -252,6 +248,17 @@ export default class AppSettings {
         description: localization.setting__rendererTags__description,
         type: SettingItemType.String,
         value: '( ) [ ] { }',
+        advanced: true,
+      },
+
+      disableText: {
+        public: true,
+        section: SETTINGS_SECTION_NAME,
+        storage: SettingStorage.File,
+        label: localization.setting__disableText,
+        description: localization.setting__disableText__description,
+        type: SettingItemType.String,
+        value: '<!-- embedded-notes-disable -->',
         advanced: true,
       },
     };

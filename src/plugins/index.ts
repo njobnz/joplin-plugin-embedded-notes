@@ -74,9 +74,11 @@ export default class App {
   };
 
   getFilteredTokens = async (query: any): Promise<JoplinNote[]> => {
-    const noteId = (await joplin.workspace.selectedNote())?.id;
+    const note = await joplin.workspace.selectedNote();
+    if (!note || note.body.includes(await this.setting('disableText'))) return [];
+
     const tokens = await findEmbeddableNotes(query?.prefix, 10);
-    const filter = tokens.filter(note => note.id !== noteId);
+    const filter = tokens.filter(item => item.id !== note.id);
     filter.sort((a, b) => a.title.localeCompare(b.title));
     return filter;
   };
@@ -95,19 +97,20 @@ export default class App {
     const note = (await joplin.workspace.selectedNote()) as JoplinNote;
     if ((!isPanel && !note) || !note) return result;
 
+    result.head = this.renderer.render(this.generateEmbeddedLinksHead(note, await this.setting('listHeader')));
+
+    if (note.body.includes(await this.setting('disableText'))) {
+      result.body = this.renderer.render(localization.message__tokensDisabled);
+      return result;
+    }
+
     const notes = await fetchEmbeddableNotes(note, ['id', 'title']);
     result.hide = notes.size === 0;
 
-    if (isPanel || !result.hide) {
-      const [delimiter, header, type] = await Promise.all([
-        this.setting('listDelimiter'),
-        this.setting('listHeader'),
-        this.setting('listType'),
-      ]);
-
-      result.head = this.renderer.render(this.generateEmbeddedLinksHead(note, header));
-      result.body = this.renderer.render(this.generateEmbeddedLinksList(notes, type, delimiter));
-    }
+    if (isPanel || !result.hide)
+      result.body = this.renderer.render(
+        this.generateEmbeddedLinksList(notes, await this.setting('listType'), await this.setting('listDelimiter'))
+      );
 
     return result;
   };

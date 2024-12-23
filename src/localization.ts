@@ -30,6 +30,8 @@ interface AppLocalization {
   setting__renderMarkdown__description: string;
   setting__rendererTags: string;
   setting__rendererTags__description: string;
+  setting__disableText: string;
+  setting__disableText__description: string;
 
   setting__listHeader: string;
   setting__listHeader__description: string;
@@ -42,6 +44,7 @@ interface AppLocalization {
   command_createNoteWithEmbeddedContent: string;
 
   message__reloadPanel: string;
+  message__tokensDisabled: string;
 }
 
 const defaultStrings: AppLocalization = {
@@ -74,10 +77,10 @@ const defaultStrings: AppLocalization = {
   setting__showIcon__description: 'Display Joplin link icon next to embedded links.',
 
   setting__listHeader: 'List header',
-  setting__listHeader__description: 'Text to display as the header of the embedded links footer block.',
+  setting__listHeader__description: 'Text to display as the header of the embedded links footer block. (default: Embeddings)',
   setting__listDelimiter: 'List delimiter',
   setting__listDelimiter__description:
-    'Define a custom delimiter to seperate embedded links when the "New Line" list style is selected. (Default: \\n)',
+    'Define a custom delimiter to separate embedded links when the "New Line" list style is selected. (Default: \\n)',
   setting__customCss: 'Panel stylesheet',
   setting__customCss__description: 'Path to custom CSS for styling the embedded links panel.',
 
@@ -90,11 +93,15 @@ const defaultStrings: AppLocalization = {
   setting__rendererTags: 'Renderer tags',
   setting__rendererTags__description:
     'Customize the characters used for renderer tags. Change only if the default tags conflict with custom token tags. Enter a space-separated list of single-character tags in this order: markdown (open/close), inline markdown (open/close), and plain text (open/close). (default: ( ) [ ] { })',
+  setting__disableText: 'Disable text',
+  setting__disableText__description:
+    'Use this text to prevent token replacement in a note. (default: <!-- embedded-notes-disable -->)',
 
   command_toggleEmbeddingsPanel: 'Show/hide embedded links panel',
   command_createNoteWithEmbeddedContent: 'Create a new note with embedded content',
 
-  message__reloadPanel: '# Embeddings\n\nSelect a note to load this panel.',
+  message__reloadPanel: '# Embedded Notes\n\nSelect a note to load this panel.',
+  message__tokensDisabled: '*Token replacement disabled.*',
 };
 
 const localizations: Record<string, AppLocalization> = {

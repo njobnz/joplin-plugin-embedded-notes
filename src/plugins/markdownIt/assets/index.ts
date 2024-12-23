@@ -52,12 +52,12 @@ export class EmbeddedNotes {
     if (!content) return;
 
     const name = (await this.fetchSetting<string>('listHeader')).replace(/^#{1,6}\s+/gm, '');
-    const heading = document.getElementById(this.headerId) ?? this.findHeaderByName(name, content);
+    const header = document.getElementById(this.headerId) ?? this.findHeaderByName(name, content);
 
-    const embeddings = await this.fetchEmbeddings(Boolean(heading));
+    const embeddings = await this.fetchEmbeddings(Boolean(header));
     if (embeddings.hide) return;
 
-    this.insertEmbeddings(content, heading, embeddings);
+    this.insertEmbeddings(content, header, embeddings);
   }
 
   init(): void {
