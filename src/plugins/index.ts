@@ -184,13 +184,13 @@ export default class App {
         if (!embeddings) return;
 
         const body = generateEmbeddedNote(note.body, embeddings);
-
-        await joplin.data.post(['notes'], null, {
+        const copy = await joplin.data.post(['notes'], null, {
           body,
           title: note.title,
           parent_id: note.parent_id,
           is_todo: note.is_todo,
         });
+        await joplin.commands.execute("openNote", copy.id);
       },
     });
   };
