@@ -15,21 +15,27 @@ import parseToken from '../utils/parseToken';
  * @returns {Promise<Map<string, EmbeddableNote>>} A map of tokens to their associated note data.
  */
 export default async (note: any, fields = ['id', 'title', 'body']): Promise<Map<string, EmbeddableNote>> => {
-  const tokens: Map<string, EmbeddableNote> = new Map();
-
-  if (!note) return tokens;
+  if (!note) return new Map<string, EmbeddableNote>();
 
   const { prefix, suffix, idOnly, rendererTags } = settings();
+  const tokens = new Map<string, EmbeddableNote>();
   const result = parseTokens(note.body, prefix, suffix);
-  const notes = idOnly ? [] : await findEmbeddableNotes('', 0, fields);
+  const notes = idOnly || !result.length ? [] : await findEmbeddableNotes('', 0, ['id', 'title']);
 
-  for (const key of result) {
-    const info = parseToken(key, prefix, suffix, rendererTags);
-    const { name, token } = info;
-    const item =
-      notes.find(i => i.id === name || i.title === name) || (validId(name) ? await fetchNoteById(name, fields) : null);
-    if (item) tokens.set(token, { note: item, info });
-  }
+  await Promise.all(
+    result.map(async key => {
+      const info = parseToken(key, prefix, suffix, rendererTags);
+      const { name, token } = info;
+
+      const item = notes.find(i => i.id === name || i.title === name);
+      const noteId = item?.id || (validId(name) ? name : null);
+
+      if (noteId) {
+        const note = await fetchNoteById(noteId, fields);
+        if (note) tokens.set(token, { note, info });
+      }
+    })
+  );
 
   return tokens;
 };
