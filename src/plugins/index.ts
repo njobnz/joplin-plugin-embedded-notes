@@ -185,7 +185,12 @@ export default class App {
 
         const body = generateEmbeddedNote(note.body, embeddings);
 
-        await joplin.data.post(['notes'], null, { body, title: note.title, parent_id: note.parent_id });
+        await joplin.data.post(['notes'], null, {
+          body,
+          title: note.title,
+          parent_id: note.parent_id,
+          is_todo: note.is_todo,
+        });
       },
     });
   };

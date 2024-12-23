@@ -50,4 +50,5 @@ export interface JoplinNote {
   parent_id: string;
   title: string;
   body: string;
+  is_todo: boolean;
 }
