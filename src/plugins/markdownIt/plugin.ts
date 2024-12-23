@@ -100,7 +100,7 @@ export default (_context: any) => ({
       renderEmbeddings(
         renderer.fence,
         tokens[idx].tag !== 'code',
-        settings().blockFence || tokens[idx].info.includes('embeddable')
+        settings().blockFence || tokens[idx].info.includes('embedded')
       )(tokens, idx, options, env, self);
   },
   assets: () => [{ name: 'assets/index.js' }],
