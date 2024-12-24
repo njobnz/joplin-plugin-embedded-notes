@@ -3,13 +3,9 @@ import CodeMirror6 from './codeMirror6';
 
 export default (context: ContentScriptContext) => {
   return {
-    plugin: (CodeMirror: any) =>
-      //CodeMirror.cm6 ? CodeMirror5(CodeMirror, context) : CodeMirror6(CodeMirror, context),
-      CodeMirror6(CodeMirror, context),
+    //plugin: (CodeMirror: any) => (CodeMirror.cm6 ? CodeMirror6(CodeMirror, context) : CodeMirror5(CodeMirror, context)),
+    plugin: (CodeMirror: any) => (CodeMirror.cm6 ? CodeMirror6(CodeMirror, context) : null),
     codeMirrorResources: ['addon/hint/show-hint'],
-    codeMirrorOptions: {
-      quickTokens: true,
-    },
     assets: () => [{ name: 'assets/hints.css' }],
   };
 };
