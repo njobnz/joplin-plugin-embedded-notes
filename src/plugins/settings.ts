@@ -4,9 +4,9 @@ import { PluginSettings } from '../types';
 import {
   EmbeddedLinksPosition,
   EmbeddedLinksType,
+  LOCAL_STORE_SETTINGS,
   LOCAL_STORE_SETTINGS_KEY,
   SETTINGS_SECTION_NAME,
-  NON_ASYNC_SETTINGS,
 } from '../constants';
 import localization from '../localization';
 import getSetting from '../utils/getSetting';
@@ -61,7 +61,7 @@ export default class AppSettings {
     const settings = {};
     for (const setting in this.specification) {
       // Only add settings that are accessed from non-async functions
-      if (!NON_ASYNC_SETTINGS.includes(setting)) continue;
+      if (!LOCAL_STORE_SETTINGS.includes(setting)) continue;
       settings[setting] = parseSettings(setting, (await joplin.settings.values(setting))[setting]);
     }
     localStorage.setItem(LOCAL_STORE_SETTINGS_KEY, JSON.stringify(settings));
