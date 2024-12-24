@@ -45,7 +45,7 @@ Typing the opening tag (%%) triggers a dropdown menu listing available note titl
 | List header      | Embeddings   | Text to display as the header of the embedded links footer block.                                                                                     |
 | List delimiter   | \\n          | Define a custom delimiter to seperate embedded links when the "New Line" list style is selected. (Default: \\n)                                       |
 | Panel stylesheet |              | Path to custom CSS for styling the embedded links panel.                                                                                              |
-| Disable text     |              | Use this text to prevent token replacement in a note. (default: <!-- embedded-notes-disable -->)                                                      |
+| Disable text     |              | Use this text to prevent token replacement in a note. (default: \<!-- embedded-notes-disable -->)                                                      |
 
 ## Installation
 <!--
