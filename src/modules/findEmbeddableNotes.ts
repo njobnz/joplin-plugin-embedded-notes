@@ -1,5 +1,5 @@
 import joplin from 'api';
-import settings from '../utils/readSettings';
+import setting from '../utils/getSetting';
 
 /**
  * Fetches embeddable notes based on a search filter or tag and returns the specified fields.
@@ -33,7 +33,7 @@ export default async (filter: string = '', limit: number = 0, fields: string[] =
     }
   };
 
-  const { tag } = settings();
+  const tag = await setting<string>('tag');
   const parts = [];
 
   if (tag) parts.push(tag);

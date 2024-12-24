@@ -1,8 +1,9 @@
 import joplin from 'api';
+import parseSettings from './parseSettings';
 
-export default async (name: string, fallback: any = null): Promise<any> => {
+export default async <T>(name: string, fallback: T = null): Promise<T> => {
   try {
-    return (await joplin.settings.values(name))[name];
+    return parseSettings(name, (await joplin.settings.values(name))[name]) as T;
   } catch (e) {
     return fallback;
   }

@@ -6,11 +6,13 @@ import {
   EmbeddedLinksType,
   LOCAL_STORE_SETTINGS_KEY,
   SETTINGS_SECTION_NAME,
+  NON_ASYNC_SETTINGS,
 } from '../constants';
 import localization from '../localization';
-import readSettings from '../utils/readSettings';
 import getSetting from '../utils/getSetting';
 import setSetting from '../utils/setSetting';
+import readSettings from '../utils/readSettings';
+import parseSettings from '../utils/parseSettings';
 import App from '.';
 
 /**
@@ -58,10 +60,9 @@ export default class AppSettings {
   save = async () => {
     const settings = {};
     for (const setting in this.specification) {
-      let value: any = (await joplin.settings.values(setting))[setting];
-      // The tag setting is only supported as a tag-specific filter, but it can be overridden with a custom filter
-      if (setting === 'tag' && value && !value.includes(':')) value = `tag:"${value}"`;
-      settings[setting] = value;
+      // Only add settings that are accessed from non-async functions
+      if (!NON_ASYNC_SETTINGS.includes(setting)) continue;
+      settings[setting] = parseSettings(setting, (await joplin.settings.values(setting))[setting]);
     }
     localStorage.setItem(LOCAL_STORE_SETTINGS_KEY, JSON.stringify(settings));
   };

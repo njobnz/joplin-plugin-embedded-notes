@@ -14,6 +14,8 @@ export const GET_SETTING_CMD: string = 'getSetting';
 export const SET_SETTING_CMD: string = 'setSetting';
 export const OPEN_NOTE_CMD: string = 'openNote';
 
+export const NON_ASYNC_SETTINGS = ['autocomplete', 'fenceOnly', 'idOnly', 'prefix', 'showIcon', 'suffix'];
+
 export enum EmbeddedLinksPosition {
   Footer,
   Header,
