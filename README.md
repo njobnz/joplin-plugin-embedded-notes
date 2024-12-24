@@ -13,7 +13,7 @@ A plugin for Joplin that enables referencing content from other notes using plac
 To reference the content of another note, use the following syntax:
 
 ```text
-%%Title of Another Note%%
+%^Title of Another Note^%
 ```
 
 This will display the content of the note titled "**Title of Another Note**" in the markdown viewer.
@@ -21,16 +21,74 @@ This will display the content of the note titled "**Title of Another Note**" in 
 Alternatively, reference a note using its ID:
 
 ```text
-%%4a7fbc2e5d9a36e10cf8b4d7ea12c390%%
+%^4a7fbc2e5d9a36e10cf8b4d7ea12c390^%
 ```
+
+### Embedded Links
+
+The plugin can display a list of embedded note titles as links in two ways:
+
+1. **Markdown Viewer**: Embedded links can be rendered as a footer or header in the markdown viewer, or by manually placing a header with the text "Embeddings". Heading text, position, and list type can be customised in the settings panel.
+2. **Separate Panel**: Embedded links can also be displayed in a separate panel. This can be enabled through the "Display panel" setting or by clicking the toggle panel button in the main toolbar. The "Panel stylesheet" setting can be set to a custom CSS file to apply custom panel styling.
+
+### Code Blocks
+
+Token replacement can be restricted to fenced code blocks by enabling the **Code blocks only** option in the settings panel.
+
+When the **Code blocks only** setting is enabled, to reference content from tokens in fenced code blocks, append the following headers to the code block:
+
+- Add `embedded` to the header to replace tokens in the block.
+
+````text
+```javascript embedded
+%^Note containing JavaScript^%
+```
+````
+
+- Add `embedded+markdown` to the header to display the content using the markdown renderer.
+
+````text
+```embedded+markdown
+%^Note containing Markdown^%
+```
+````
+
+### Tag customisation
+
+The tag prefix and suffix settings allow customisation of token opening and closing tags. Both settings are required.
+
+To avoid ambiguous token matches, it is recommended to use distinct character sequences for opening and closing tags. For example:
+
+- Preferred: `%^ and ^%` or `%% and $$`
+- Avoid: `%% and %%` or `&& and &&`
+
+### Filtering Notes
+
+The **Tag filter** setting can be used to ***restrict named tokens*** to notes with the specified tag. Notes without this tag remain accessible through their unique IDs.
+
+Generic search queries are also supported. For example:
+
+```text
+notebook:"Snippets"
+```
+
+**Note:** To reduce memory usage and maintain optimal performance, it is highly recommended to apply a filter when working with a large database of notes.
 
 ### Generate Note
 
-To create a note that includes the full content from referenced notes, open a note containing tokens and select **Tools > Embedded notes > Create a new note with embedded content** from the menu or press **CTRL+ALT+E**. The new note will open automatically in the editor.
+To create a new note that includes the full content from referenced notes, open a note containing tokens and select from the menu:
+
+- **Tools > Embedded notes > Create a new note with embedded content**
+
+Or press:
+
+- **CTRL+ALT+E**
+
+The new note will open automatically in the editor.
 
 ### Autocomplete
 
-Typing the opening tag (%%) triggers a dropdown menu listing available note titles. Selecting a title will autocomplete the token.
+Typing the opening tag (%^) triggers a dropdown menu listing available note titles. Selecting a title will autocomplete the token.
 
 ## Settings
 
@@ -40,8 +98,8 @@ Typing the opening tag (%%) triggers a dropdown menu listing available note titl
 | Code blocks only | No           | Only replace tokens found in fenced code blocks (\`\`\`). To enable token replacement for a specific block, write `embedded` in the header. (\`\`\`). |
 | Note IDs only    | No           | Allow only note IDs to be used as tokens.                                                                                                             |
 | Tag filter       |              | Restrict token titles to notes with the specified tag name. Notes without this tag can still be referenced by ID.                                     |
-| Token prefix     | %%           | Opening tag for tokens. (default: %%)                                                                                                                 |
-| Token suffix     | %%           | Closing tag for tokens. (default: %%)                                                                                                                 |
+| Token prefix     | %^           | Opening tag for tokens. (default: %^)                                                                                                                 |
+| Token suffix     | ^%           | Closing tag for tokens. (default: ^%)                                                                                                                 |
 | Embedded links   | Note Footer  | Position to render a list of embedded note titles with links to the original notes in the markdown viewer.                                            |
 | List style       | Ordered List | Display embedded links as new lines, ordered, or unordered list.                                                                                      |
 | Display panel    | No           | Display embedded links in a separate panel.                                                                                                           |
