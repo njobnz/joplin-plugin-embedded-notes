@@ -3,8 +3,7 @@ import type * as CodeMirrorAutocompleteType from '@codemirror/autocomplete';
 import type { CompletionContext, CompletionResult, Completion } from '@codemirror/autocomplete';
 import type { EditorView } from '@codemirror/view';
 import type { Extension } from '@codemirror/state';
-import { GET_FILTERED_TOKENS_CMD } from '../../constants';
-import settings from '../../utils/readSettings';
+import { GET_FILTERED_TOKENS_CMD, GET_SETTINGS_CMD } from '../../constants';
 import escape from '../../utils/escapeRegExp';
 
 export default async (CodeMirror: any, _context: ContentScriptContext) => {
@@ -12,7 +11,10 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
     require('@codemirror/autocomplete') as typeof CodeMirrorAutocompleteType;
 
   const completeToken = async (context: CompletionContext): Promise<CompletionResult> => {
-    const { prefix, suffix, idOnly, autocomplete } = settings();
+    const { prefix, suffix, idOnly, autocomplete } = await _context.postMessage({
+      command: GET_SETTINGS_CMD,
+      values: ['prefix', 'suffix', 'idOnly', 'autocomplete'],
+    });
 
     if (!autocomplete) return null;
 

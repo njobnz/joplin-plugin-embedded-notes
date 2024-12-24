@@ -6,6 +6,7 @@ import {
   EmbeddedLinksType,
   GET_FILTERED_TOKENS_CMD,
   GET_EMBEDDED_LINKS_CMD,
+  GET_SETTINGS_CMD,
   GET_SETTING_CMD,
   SET_SETTING_CMD,
   OPEN_NOTE_CMD,
@@ -50,6 +51,11 @@ export default class App {
         return this.getFilteredTokens(message?.query);
       case GET_EMBEDDED_LINKS_CMD:
         return await this.getEmbeddedLinks(!!message?.isFound);
+      case GET_SETTINGS_CMD:
+        const values = message?.values;
+        if (!Array.isArray(values)) return {};
+        const settings = await Promise.all(values.map(async name => await this.setting(name)));
+        return values.reduce((obj, key, index) => ({ ...obj, [key]: settings[index] }), {});
       case GET_SETTING_CMD:
         return await this.setting(message?.name);
       case SET_SETTING_CMD:

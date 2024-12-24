@@ -20,7 +20,7 @@ export default async (note: any, fields = ['id', 'title', 'body']): Promise<Map<
   const [prefix, suffix, idOnly] = await Promise.all([
     await setting<string>('prefix'),
     await setting<string>('suffix'),
-    await setting<string>('idOnly'),
+    await setting<boolean>('idOnly'),
   ]);
 
   const tokens = new Map<string, EmbeddableNote>();

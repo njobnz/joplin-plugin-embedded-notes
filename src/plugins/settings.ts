@@ -45,11 +45,11 @@ export default class AppSettings {
   set = setSetting;
 
   /**
-   * Read settings from localStorage.
+   * Read stored settings from localStorage.
    *
-   * @returns {PluginSettings} Plugin settings object.
+   * @returns {T} The setting value.
    */
-  read = readSettings;
+  read = <T>(name: string): T => readSettings(name);
 
   /**
    * Fetches plugin settings from Joplin's API and stores them in localStorage.

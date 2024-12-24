@@ -1,20 +1,21 @@
 import MarkdownIt from 'markdown-it';
+import AppSettings from './settings';
 import App from '.';
 
 export default class Renderer {
   app: App = null;
-  setting: Function;
+  settings: AppSettings;
   markdown: MarkdownIt;
 
   constructor(app: App) {
     if (!app) throw Error('app cannot be null');
     this.app = app;
-    this.setting = app.settings.read;
+    this.settings = app.settings;
 
     this.markdown = new MarkdownIt({ breaks: true });
     this.markdown.renderer.rules.link_open = (tokens, idx, _options, _env, _self) => {
       const href = tokens[idx].attrGet('href');
-      const icon = this.setting().showIcon ? '<span class="resource-icon fa-joplin"></span>' : '';
+      const icon = this.settings.read<boolean>('showIcon') ? '<span class="resource-icon fa-joplin"></span>' : '';
       return `<a href="${href}">${icon}`;
     };
   }

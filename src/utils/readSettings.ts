@@ -4,6 +4,9 @@ import { PluginSettings } from '../types';
 /**
  * Read stored settings from localStorage.
  *
- * @returns {PluginSettings} Plugin settings object.
+ * @returns {T} Plugin settings object or specific setting.
  */
-export default (): PluginSettings => JSON.parse(localStorage.getItem(LOCAL_STORE_SETTINGS_KEY));
+export default function readSettings<T>(name: string): T {
+  const settings = JSON.parse(localStorage.getItem(LOCAL_STORE_SETTINGS_KEY)) || {};
+  return settings[name] ? settings[name] as T : null;
+}
