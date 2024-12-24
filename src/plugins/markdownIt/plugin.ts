@@ -7,8 +7,6 @@ let isRendering = false;
 
 export default _context => ({
   plugin: (md, _options) => {
-    console.log(_context);
-    console.log(_options);
     const renderProxy = (tokens, idx, options, env, self) => self.renderToken(tokens, idx, options, env, self);
     const renderFence = md.renderer.rules.fence || renderProxy;
 
