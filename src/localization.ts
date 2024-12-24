@@ -57,9 +57,9 @@ const defaultStrings: AppLocalization = {
   setting__tag__description:
     'Restrict token titles to notes with the specified tag name. Notes without this tag can still be referenced by ID.',
   setting__prefix: 'Token prefix',
-  setting__prefix__description: 'Opening tag for tokens. (default: %%)',
+  setting__prefix__description: 'Opening tag for tokens. (default: %^)',
   setting__suffix: 'Token suffix',
-  setting__suffix__description: 'Closing tag for tokens. (default: %%)',
+  setting__suffix__description: 'Closing tag for tokens. (default: ^%)',
 
   setting__listPosition: 'Embedded links',
   setting__listPosition__description:

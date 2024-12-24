@@ -116,7 +116,7 @@ export default class AppSettings {
         label: localization.setting__prefix,
         description: localization.setting__prefix__description,
         type: SettingItemType.String,
-        value: '%%',
+        value: '%^',
       },
 
       suffix: {
@@ -126,7 +126,7 @@ export default class AppSettings {
         label: localization.setting__suffix,
         description: localization.setting__suffix__description,
         type: SettingItemType.String,
-        value: '%%',
+        value: '^%',
       },
 
       listPosition: {
