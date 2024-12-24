@@ -61,11 +61,6 @@ export default class AppSettings {
       let value: any = (await joplin.settings.values(setting))[setting];
       // The tag setting is only supported as a tag-specific filter, but it can be overridden with a custom filter
       if (setting === 'tag' && value && !value.includes(':')) value = `tag:"${value}"`;
-      if (setting === 'rendererTags') {
-        const results = value.split(' ');
-        const defaults = this.specification.rendererTags.value.split(' ');
-        value = defaults.map((tag, index) => results[index] ?? tag);
-      }
       settings[setting] = value;
     }
     localStorage.setItem(LOCAL_STORE_SETTINGS_KEY, JSON.stringify(settings));
@@ -215,39 +210,6 @@ export default class AppSettings {
         description: localization.setting__customCss__description,
         subType: SettingItemSubType.FilePath,
         value: `${await joplin.settings.globalValue('profileDir')}/embedded-notes.css`,
-        advanced: true,
-      },
-
-      blockFence: {
-        public: true,
-        section: SETTINGS_SECTION_NAME,
-        storage: SettingStorage.File,
-        label: localization.setting__blockFence,
-        description: localization.setting__blockFence__description,
-        type: SettingItemType.Bool,
-        value: true,
-        advanced: true,
-      },
-
-      renderMarkdown: {
-        public: true,
-        section: SETTINGS_SECTION_NAME,
-        storage: SettingStorage.File,
-        label: localization.setting__renderMarkdown,
-        description: localization.setting__renderMarkdown__description,
-        type: SettingItemType.Bool,
-        value: false,
-        advanced: true,
-      },
-
-      rendererTags: {
-        public: true,
-        section: SETTINGS_SECTION_NAME,
-        storage: SettingStorage.File,
-        label: localization.setting__rendererTags,
-        description: localization.setting__rendererTags__description,
-        type: SettingItemType.String,
-        value: '( ) [ ] { }',
         advanced: true,
       },
 

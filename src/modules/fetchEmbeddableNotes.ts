@@ -17,14 +17,14 @@ import parseToken from '../utils/parseToken';
 export default async (note: any, fields = ['id', 'title', 'body']): Promise<Map<string, EmbeddableNote>> => {
   if (!note) return new Map<string, EmbeddableNote>();
 
-  const { prefix, suffix, idOnly, rendererTags } = settings();
+  const { prefix, suffix, idOnly } = settings();
   const tokens = new Map<string, EmbeddableNote>();
   const result = parseTokens(note.body, prefix, suffix);
   const notes = idOnly || !result.length ? [] : await findEmbeddableNotes('', 0, ['id', 'title']);
 
   await Promise.all(
     result.map(async key => {
-      const info = parseToken(key, prefix, suffix, rendererTags);
+      const info = parseToken(key, prefix, suffix);
       const { name, token } = info;
 
       const item = notes.find(i => i.id === name || i.title === name);

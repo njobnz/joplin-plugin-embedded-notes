@@ -190,7 +190,7 @@ export default class App {
           parent_id: note.parent_id,
           is_todo: note.is_todo,
         });
-        await joplin.commands.execute("openNote", copy.id);
+        await joplin.commands.execute('openNote', copy.id);
       },
     });
   };

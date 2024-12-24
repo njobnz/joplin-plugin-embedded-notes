@@ -7,17 +7,14 @@ export interface PluginSettings {
   tag: string;
   prefix: string;
   suffix: string;
-  blockFence: boolean;
-  disableText: string;
-  renderMarkdown: boolean;
-  rendererTags: string[];
   listPosition: EmbeddedLinksPosition;
   listType: EmbeddedLinksType;
-  showIcon: boolean;
   showPanel: boolean;
+  showIcon: boolean;
   listHeader: string;
   listDelimiter: string;
   customCss: string;
+  disableText: string;
 }
 
 export interface EmbeddableNote {
@@ -34,9 +31,8 @@ export interface EmbeddedLinksContent {
 
 export interface TokenInfo {
   name: string;
-  tag: string;
+  input: string;
   token: string;
-  renderer: TokenRenderers;
 }
 
 export interface TokenRenderers {

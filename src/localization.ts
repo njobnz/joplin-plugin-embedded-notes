@@ -24,21 +24,15 @@ interface AppLocalization {
   setting__showPanel: string;
   setting__showPanel__description: string;
 
-  setting__blockFence: string;
-  setting__blockFence__description: string;
-  setting__renderMarkdown: string;
-  setting__renderMarkdown__description: string;
-  setting__rendererTags: string;
-  setting__rendererTags__description: string;
-  setting__disableText: string;
-  setting__disableText__description: string;
-
   setting__listHeader: string;
   setting__listHeader__description: string;
   setting__listDelimiter: string;
   setting__listDelimiter__description: string;
   setting__customCss: string;
   setting__customCss__description: string;
+
+  setting__disableText: string;
+  setting__disableText__description: string;
 
   command_toggleEmbeddingsPanel: string;
   command_createNoteWithEmbeddedContent: string;
@@ -51,11 +45,12 @@ const defaultStrings: AppLocalization = {
   settings__appName: 'Embedded Notes',
   settings__description: 'Reference content from other notes using placeholder tokens.',
 
-  setting__autocomplete: 'Autocomplete',
+  setting__autocomplete: 'Enable autocomplete',
   setting__autocomplete__description:
     'Display a dropdown of token suggestions in the editor when the opening tag is entered.',
   setting__fenceOnly: 'Code blocks only',
-  setting__fenceOnly__description: 'Only replace tokens found in fenced code blocks (```).',
+  setting__fenceOnly__description:
+    'Only replace tokens found in fenced code blocks (```). To enable token replacement for a specific block, write `embedded` in the header.',
   setting__idOnly: 'Note IDs only',
   setting__idOnly__description: 'Allow only note IDs to be used as tokens.',
   setting__tag: 'Tag filter',
@@ -77,22 +72,14 @@ const defaultStrings: AppLocalization = {
   setting__showIcon__description: 'Display Joplin link icon next to embedded links.',
 
   setting__listHeader: 'List header',
-  setting__listHeader__description: 'Text to display as the header of the embedded links footer block. (default: Embeddings)',
+  setting__listHeader__description:
+    'Text to display as the header of the embedded links footer block. (default: Embeddings)',
   setting__listDelimiter: 'List delimiter',
   setting__listDelimiter__description:
     'Define a custom delimiter to separate embedded links when the "New Line" list style is selected. (Default: \\n)',
   setting__customCss: 'Panel stylesheet',
   setting__customCss__description: 'Path to custom CSS for styling the embedded links panel.',
 
-  setting__blockFence: 'Always replace in code blocks',
-  setting__blockFence__description:
-    'Automatically replace tokens in fenced code blocks (```). To enable token replacement for a specific block, write `embedded` in the header.',
-  setting__renderMarkdown: 'Always render markdown (caution)',
-  setting__renderMarkdown__description:
-    'Always render markdown found in referenced notes without using ( ) tags. Markdown is not rendered in code blocks. This feature is highly experimental and may cause rendering issues.',
-  setting__rendererTags: 'Renderer tags',
-  setting__rendererTags__description:
-    'Customize the characters used for renderer tags. Change only if the default tags conflict with custom token tags. Enter a space-separated list of single-character tags in this order: markdown (open/close), inline markdown (open/close), and plain text (open/close). (default: ( ) [ ] { })',
   setting__disableText: 'Disable text',
   setting__disableText__description:
     'Use this text to prevent token replacement in a note. (default: <!-- embedded-notes-disable -->)',

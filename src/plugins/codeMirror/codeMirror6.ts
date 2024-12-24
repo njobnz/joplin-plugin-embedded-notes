@@ -12,7 +12,7 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
     require('@codemirror/autocomplete') as typeof CodeMirrorAutocompleteType;
 
   const completeToken = async (context: CompletionContext): Promise<CompletionResult> => {
-    const { prefix, suffix, idOnly, autocomplete, rendererTags: r } = settings();
+    const { prefix, suffix, idOnly, autocomplete } = settings();
 
     if (!autocomplete) return null;
 
@@ -21,20 +21,10 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
 
     if (!match || (match.from === match.to && !context.explicit)) return null;
 
-    const brackets = new Map<string, string>();
-
-    brackets.set(r[0], r[1]);
-    brackets.set(r[2], r[3]);
-    brackets.set(r[4], r[5]);
-
-    const first = match.text[prefix.length];
-    const opening = new RegExp(`^[${escape(r[0] + r[2] + r[4])}]`).test(first) ? first : '';
-    const closing = brackets.get(opening) ?? '';
-
     const tokens = await _context.postMessage({
       command: GET_FILTERED_TOKENS_CMD,
       query: {
-        prefix: match.text.substring(prefix.length + (opening ? 1 : 0)),
+        prefix: match.text.substring(prefix.length),
       },
     });
 
@@ -44,7 +34,7 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
       return (view: EditorView, _completion: Completion, from: number, to: number) => {
         // TODO: Add custom keybind to insert note id from autocomplete dropdown
         const tokenName = idOnly ? noteId : noteTitle;
-        const tokenText = `${prefix}${opening}${tokenName}${closing}${suffix}`;
+        const tokenText = `${prefix}${tokenName}${suffix}`;
         view.dispatch(insertCompletionText(view.state, tokenText, from, to));
       };
     };
