@@ -12,7 +12,7 @@ A plugin for Joplin that enables referencing content from other notes using plac
 
 To reference the content of another note, use the following syntax:
 
-```
+```text
 %%Title of Another Note%%
 ```
 
@@ -20,9 +20,13 @@ This will display the content of the note titled "**Title of Another Note**" in 
 
 Alternatively, reference a note using its ID:
 
-```
+```text
 %%4a7fbc2e5d9a36e10cf8b4d7ea12c390%%
 ```
+
+### Generate Note
+
+To create a note that includes the full content from referenced notes, open a note containing tokens and select **Tools > Embedded notes > Create a new note with embedded content** from the menu or press **CTRL+ALT+E**. The new note will open automatically in the editor.
 
 ### Autocomplete
 
@@ -45,7 +49,7 @@ Typing the opening tag (%%) triggers a dropdown menu listing available note titl
 | List header      | Embeddings   | Text to display as the header of the embedded links footer block.                                                                                     |
 | List delimiter   | \\n          | Define a custom delimiter to seperate embedded links when the "New Line" list style is selected. (Default: \\n)                                       |
 | Panel stylesheet |              | Path to custom CSS for styling the embedded links panel.                                                                                              |
-| Disable text     |              | Use this text to prevent token replacement in a note. (default: \<!-- embedded-notes-disable -->)                                                      |
+| Disable text     |              | Use this text to prevent token replacement in a note. (default: \<!-- embedded-notes-disable -->)                                                     |
 
 ## Installation
 <!--
@@ -64,9 +68,9 @@ Typing the opening tag (%%) triggers a dropdown menu listing available note titl
 
 ## Known issues and limitations
 
-- **Switching Notes:** Tokens may not update immediately when switching between notes. Editing the note usually triggers the tokens to render.
-- **Token Naming:** Token names cannot contain characters reserved for the opening and closing tags, or have spaces at the beginning or end. Use note ID tokens to reference notes with titles that include reserved characters.
-- **Duplicate Titles:** Only the last note found with a duplicate title is used. To avoid ambiguity, reference notes with duplicate titles using their unique note ID.
+- **Rendering Tokens:** Tokens may not update immediately when switching between notes or upon loading the editor. Editing the note will trigger the tokens to render.
+- **Token Naming:** Token names cannot contain the character sequence reserved for the opening and closing tags, or have spaces at the beginning or end. Use note ID tokens to reference notes with titles that include reserved characters.
+- **Duplicate Titles:** Only the first note found with a duplicate title is used. To avoid ambiguity, reference notes with duplicate titles using their unique note ID.
 - **Nested Tokens:** Nested token replacement is not supported.
 
 ## Acknowledgments
