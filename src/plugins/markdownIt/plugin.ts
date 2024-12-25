@@ -13,13 +13,16 @@ export default _context => ({
     md.renderer.rules.fence = (tokens, idx, options, env, self) => {
       const token = tokens[idx];
 
-      if (setting<boolean>('fenceOnly') && token.tag === 'code' && !isRendering) {
+      if (setting<boolean>('fenceOnly') && token.type === 'fence' && !isRendering) {
         const embeddings = readEmbeddableNotes();
         const isEmbedded = embeddings && token.info.includes('embedded');
-        const isMarkdown = token.info.includes('embedded+markdown');
+        const isMarkdown = isEmbedded && token.info.includes('markdown');
 
         if (isEmbedded) {
+          const content = token.content;
           token.content = replaceTokens(token.content, embeddings);
+
+          let html = '';
           if (isMarkdown) {
             try {
               // Temporarily disable custom rules added by other Joplin plugins that render
@@ -32,7 +35,7 @@ export default _context => ({
               // Prevent recursion when calling md.render
               isRendering = true;
 
-              return md.render(token.content);
+              html = md.render(token.content);
             } catch (error) {
               console.error('Error rendering markdown:', error, tokens);
             } finally {
@@ -41,6 +44,30 @@ export default _context => ({
               isRendering = false;
             }
           }
+
+          if (!html) {
+            html = renderFence(tokens, idx, options, env, self);
+
+            // Joplin markdown highlighter wraps the content its own "joplin-editable" element.
+            // Extract just the content block from the rendered HTML.
+            // Code highlighting remains applied to the embedded note.
+            const start = html.indexOf('</pre>') + 6;
+            const end = html.lastIndexOf('</div>');
+
+            html = html.slice(start, end);
+          }
+
+          return `
+            <div class="joplin-editable embedded-note embedded-note-fence">
+              <pre
+                class="joplin-source"
+                data-joplin-language="${md.utils.escapeHtml(token.info)}"
+                data-joplin-source-open="${token.markup}${md.utils.escapeHtml(token.info)}&NewLine;"
+                data-joplin-source-close="${token.markup}"
+              >${md.utils.escapeHtml(content)}</pre>
+              ${html}
+            </div>
+          `;
         }
       }
 
