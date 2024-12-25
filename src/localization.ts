@@ -50,7 +50,7 @@ const defaultStrings: AppLocalization = {
     'Display a dropdown of token suggestions in the editor when the opening tag is entered.',
   setting__fenceOnly: 'Code blocks only',
   setting__fenceOnly__description:
-    'Only replace tokens found in fenced code blocks (```). To enable token replacement for a specific block, write `embedded` in the header.',
+    'Restrict token replacement to fenced code blocks (\`\`\`) that include `embedded` in the header.',
   setting__idOnly: 'Note IDs only',
   setting__idOnly__description: 'Allow only note IDs to be used as tokens.',
   setting__tag: 'Tag filter',
@@ -63,7 +63,7 @@ const defaultStrings: AppLocalization = {
 
   setting__listPosition: 'Embedded links',
   setting__listPosition__description:
-    'Position to render a list of embedded note titles with links to the original notes in the markdown viewer.',
+    'Position to display the list of embedded note links in the markdown viewer.',
   setting__listType: 'List style',
   setting__listType__description: 'Display embedded links as new lines, ordered, or unordered list.',
   setting__showPanel: 'Display panel',
@@ -73,7 +73,7 @@ const defaultStrings: AppLocalization = {
 
   setting__listHeader: 'List header',
   setting__listHeader__description:
-    'Text to display as the header of the embedded links footer block. (default: Embeddings)',
+    'Header text for the embedded links section. (default: Embeddings)',
   setting__listDelimiter: 'List delimiter',
   setting__listDelimiter__description:
     'Defines a custom delimiter to separate embedded links when the "New Line" list style is selected. (Default: \\n)',
