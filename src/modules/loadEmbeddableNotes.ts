@@ -10,6 +10,6 @@ import fetchEmbeddableNotes from './fetchEmbeddableNotes';
 export default async (): Promise<void> => {
   const note = (await joplin.workspace.selectedNote()) as JoplinNote;
   const text = await setting<string>('disableText');
-  const notes = !note.body.includes(text) ? await fetchEmbeddableNotes(note) : new Map<string, EmbeddableNote>();
+  const notes = note && !note.body.includes(text) ? await fetchEmbeddableNotes(note) : new Map<string, EmbeddableNote>();
   localStorage.setItem(LOCAL_STORE_NOTES_KEY, JSON.stringify(Object.fromEntries(notes)));
 };
