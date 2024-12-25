@@ -76,7 +76,7 @@ const defaultStrings: AppLocalization = {
     'Text to display as the header of the embedded links footer block. (default: Embeddings)',
   setting__listDelimiter: 'List delimiter',
   setting__listDelimiter__description:
-    'Define a custom delimiter to separate embedded links when the "New Line" list style is selected. (Default: \\n)',
+    'Defines a custom delimiter to separate embedded links when the "New Line" list style is selected. (Default: \\n)',
   setting__customCss: 'Panel stylesheet',
   setting__customCss__description: 'Path to custom CSS for styling the embedded links panel.',
 

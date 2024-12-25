@@ -24,20 +24,13 @@ Alternatively, reference a note using its ID:
 %^4a7fbc2e5d9a36e10cf8b4d7ea12c390^%
 ```
 
-### Embedded Links
-
-The plugin can display a list of embedded note titles as links in two ways:
-
-1. **Markdown Viewer**: Embedded links can be rendered as a footer or header in the markdown viewer, or by manually placing a header with the text "Embeddings". Heading text, position, and list type can be customised in the settings panel.
-2. **Separate Panel**: Embedded links can also be displayed in a separate panel. This can be enabled through the "Display panel" setting or by clicking the toggle panel button in the main toolbar. The "Panel stylesheet" setting can be set to a custom CSS file to apply custom panel styling.
-
 ### Code Blocks
 
 Token replacement can be restricted to fenced code blocks by enabling the **Code blocks only** option in the settings panel.
 
-When the **Code blocks only** setting is enabled, to reference content from tokens in fenced code blocks, append the following headers to the code block:
+When this setting is enabled, reference content within fenced code blocks by adding the following headers:
 
-- Add `embedded` to the header to replace tokens in the block.
+- Use `embedded` to replace tokens within the block.
 
 ````text
 ```javascript embedded
@@ -45,7 +38,7 @@ When the **Code blocks only** setting is enabled, to reference content from toke
 ```
 ````
 
-- Add `embedded+markdown` to the header to display the content using the markdown renderer.
+- Use `embedded+markdown` to display the content using the markdown renderer.
 
 ````text
 ```embedded+markdown
@@ -53,18 +46,18 @@ When the **Code blocks only** setting is enabled, to reference content from toke
 ```
 ````
 
-### Tag customisation
+### Embedded Links
 
-The tag prefix and suffix settings allow customisation of token opening and closing tags. Both settings are required.
+A list of embedded note titles with links to the original notes can be displayed with the following options.
 
-To avoid ambiguous token matches, it is recommended to use distinct character sequences for opening and closing tags. For example:
-
-- Preferred: `%^ and ^%` or `%% and $$`
-- Avoid: `%% and %%` or `&& and &&`
+1. **Markdown Viewer**:
+Links can be displayed as a footer or header in the markdown viewer or by adding a header with the text "*Embeddings*". The heading text, position, and list type can be customised in the settings panel.
+2. **Separate Panel**:
+Links can also be displayed in a separate panel. This can be enabled through the **Display panel** setting or by clicking the toggle panel button in the main toolbar. The **Panel stylesheet** setting allows applying custom CSS to style the panel.
 
 ### Filtering Notes
 
-The **Tag filter** setting can be used to ***restrict named tokens*** to notes with the specified tag. Notes without this tag remain accessible through their unique IDs.
+The **Tag filter** ***restricts named tokens*** to notes with the specified tag. Notes without this tag can still be accessed through their unique IDs.
 
 Generic search queries are also supported. For example:
 
@@ -72,7 +65,7 @@ Generic search queries are also supported. For example:
 notebook:"Snippets"
 ```
 
-**Note:** To reduce memory usage and maintain optimal performance, it is highly recommended to apply a filter when working with a large database of notes.
+***Note:** Applying a filter may help reduce memory usage and improve performance, especially when working with a large database of notes.*
 
 ### Generate Note
 
@@ -90,6 +83,15 @@ The new note will open automatically in the editor.
 
 Typing the opening tag (%^) triggers a dropdown menu listing available note titles. Selecting a title will autocomplete the token.
 
+### Tag customisation
+
+The tag prefix and suffix can be customised in the settings panel. Both settings must be defined.
+
+To avoid ambiguous token matches, it is recommended to use distinct character sequences for opening and closing tags. For example:
+
+- Preferred: `%^ and ^%` or `%% and $$`
+- Avoid: `%% and %%` or `&& and &&`
+
 ## Settings
 
 | Setting          | Default      | Description                                                                                                                                           |
@@ -105,7 +107,7 @@ Typing the opening tag (%^) triggers a dropdown menu listing available note titl
 | Display panel    | No           | Display embedded links in a separate panel.                                                                                                           |
 | Joplin icon      | Yes          | Display Joplin link icon next to embedded links.                                                                                                      |
 | List header      | Embeddings   | Text to display as the header of the embedded links footer block.                                                                                     |
-| List delimiter   | \\n          | Define a custom delimiter to seperate embedded links when the "New Line" list style is selected. (Default: \\n)                                       |
+| List delimiter   | \\n          | Defines a custom delimiter to separate embedded links when the "New Line" list style is selected. (Default: \\n)                                      |
 | Panel stylesheet |              | Path to custom CSS for styling the embedded links panel.                                                                                              |
 | Disable text     |              | Use this text to prevent token replacement in a note. (default: \<!-- embedded-notes-disable -->)                                                     |
 
@@ -126,7 +128,7 @@ Typing the opening tag (%^) triggers a dropdown menu listing available note titl
 
 ## Known issues and limitations
 
-- **Rendering Tokens:** Tokens may not update immediately when switching between notes or upon loading the editor. Editing the note will trigger the tokens to render.
+- **Rendering Tokens:** Tokens may not update immediately when switching between notes or upon loading the application. Editing the note will trigger the tokens to render.
 - **Token Naming:** Token names cannot contain the character sequence reserved for the opening and closing tags, or have spaces at the beginning or end. Use note ID tokens to reference notes with titles that include reserved characters.
 - **Duplicate Titles:** Only the first note found with a duplicate title is used. To avoid ambiguity, reference notes with duplicate titles using their unique note ID.
 - **Nested Tokens:** Nested token replacement is not supported.
