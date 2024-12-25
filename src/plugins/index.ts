@@ -39,10 +39,13 @@ export default class App {
     this.panel = new EmbeddingsView(this);
   }
 
-  setting = async (name: string, value?: any): Promise<any> => {
+  setting = async <T>(name: string, value?: T): Promise<T> => {
     if (!this.settings) throw Error('Settings not initialized.');
-    if (value !== undefined) return this.settings.set(name, value);
-    return this.settings.get(name);
+    if (value !== undefined) {
+      await this.settings.set(name, value);
+      return value;
+    }
+    return await this.settings.get<T>(name);
   };
 
   onMessageHandler = async (message: any): Promise<any> => {
@@ -81,7 +84,7 @@ export default class App {
 
   getFilteredTokens = async (query: any): Promise<JoplinNote[]> => {
     const note = await joplin.workspace.selectedNote();
-    if (!note || note.body.includes(await this.setting('disableText'))) return [];
+    if (!note || note.body.includes(await this.setting<string>('disableText'))) return [];
 
     const tokens = await findEmbeddableNotes(query?.prefix, 10);
     const filter = tokens.filter(item => item.id !== note.id);
@@ -97,15 +100,15 @@ export default class App {
       body: '',
     };
 
-    result.position = (await this.setting('listPosition')) as EmbeddedLinksPosition;
+    result.position = (await this.setting<EmbeddedLinksPosition>('listPosition')) as EmbeddedLinksPosition;
     if (!isFound && result.position === EmbeddedLinksPosition.None) return result;
 
     const note = (await joplin.workspace.selectedNote()) as JoplinNote;
     if ((!isPanel && !note) || !note) return result;
 
-    result.head = this.renderer.render(this.generateEmbeddedLinksHead(note, await this.setting('listHeader')));
+    result.head = this.renderer.render(this.generateEmbeddedLinksHead(note, await this.setting<string>('listHeader')));
 
-    if (note.body.includes(await this.setting('disableText'))) {
+    if (note.body.includes(await this.setting<string>('disableText'))) {
       result.body = this.renderer.render(localization.message__tokensDisabled);
       return result;
     }
@@ -115,7 +118,11 @@ export default class App {
 
     if (isPanel || !result.hide)
       result.body = this.renderer.render(
-        this.generateEmbeddedLinksList(notes, await this.setting('listType'), await this.setting('listDelimiter'))
+        this.generateEmbeddedLinksList(
+          notes,
+          await this.setting<EmbeddedLinksType>('listType'),
+          await this.setting<string>('listDelimiter')
+        )
       );
 
     return result;
@@ -165,7 +172,8 @@ export default class App {
       iconName: 'fas fa-laptop-code',
       execute: async () => {
         if (!this.panel) return;
-        await this.setting('showPanel', !(await this.setting('showPanel')));
+        const state = !(await this.setting<boolean>('showPanel'));
+        await this.setting<boolean>('showPanel', state);
         this.panel.refresh();
       },
     });

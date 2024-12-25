@@ -20,14 +20,14 @@ export class EmbeddedNotes {
   }
 
   async fetchSetting<T>(name: string): Promise<T> {
-    return webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
+    return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
       command: GET_SETTING_CMD,
       name,
     });
   }
 
   async fetchEmbeddings(isFound: boolean): Promise<EmbeddedLinksContent> {
-    return webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
+    return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
       command: GET_EMBEDDED_LINKS_CMD,
       isFound,
     });

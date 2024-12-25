@@ -13,7 +13,7 @@ export default _context => ({
     md.renderer.rules.fence = (tokens, idx, options, env, self) => {
       const token = tokens[idx];
 
-      if (setting<string>('fenceOnly') && token.tag === 'code' && !isRendering) {
+      if (setting<boolean>('fenceOnly') && token.tag === 'code' && !isRendering) {
         const embeddings = readEmbeddableNotes();
         const isEmbedded = embeddings && token.info.includes('embedded');
         const isMarkdown = token.info.includes('embedded+markdown');
@@ -48,7 +48,7 @@ export default _context => ({
     };
 
     md.core.ruler.before('normalize', 'embedded_notes', (state: any) => {
-      if (!setting<string>('fenceOnly')) state.src = replaceTokens(state.src, readEmbeddableNotes());
+      if (!setting<boolean>('fenceOnly')) state.src = replaceTokens(state.src, readEmbeddableNotes());
     });
   },
   assets: () => [{ name: 'assets/index.js' }],

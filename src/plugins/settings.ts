@@ -33,16 +33,14 @@ export default class AppSettings {
   /**
    * Get a setting from Joplin API.
    *
-   * @returns {Promise<any>} The setting value.
+   * @returns {Promise<T>} The setting value.
    */
-  get = getSetting;
+  get: <T>(name: string, fallback?: T) => Promise<T> = getSetting;
 
   /**
    * Set a setting using Joplin API.
-   *
-   * @returns {Promise<any>} The setting value.
    */
-  set = setSetting;
+  set: (name: string, value?: any) => Promise<void> = setSetting;
 
   /**
    * Read stored settings from localStorage.

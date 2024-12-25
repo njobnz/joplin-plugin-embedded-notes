@@ -9,7 +9,7 @@ import App from '..';
 export default class EmbeddingsView {
   app: App = null;
   panel: ViewHandle = null;
-  setting: Function = null;
+  setting: <T>(name: string) => Promise<T> = null;
 
   constructor(app: App) {
     if (!app) throw Error('app cannot be null');
@@ -23,7 +23,7 @@ export default class EmbeddingsView {
 
   content = async (text: string = ''): Promise<string> => {
     const html = text && text !== '' ? text : this.app.renderer.render(localization.message__reloadPanel);
-    const path = await this.setting('customCss');
+    const path = await this.setting<string>('customCss');
     const style = existsSync(path) ? `<style>${readFileSync(path, 'utf-8')}</style>` : '';
     return `${style}<div id="${EMBEDDED_LINKS_PANEL_EL}">${html}</div>`;
   };
@@ -42,7 +42,7 @@ export default class EmbeddingsView {
   refresh = async (): Promise<void> => {
     if (!this.app) return;
 
-    if ((await this.setting('showPanel')) as boolean) {
+    if (await this.setting<boolean>('showPanel')) {
       if (!this.panel) await this.build();
       else await joplin.views.panels.show(this.panel);
 

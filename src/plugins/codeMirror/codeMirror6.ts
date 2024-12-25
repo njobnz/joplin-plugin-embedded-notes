@@ -3,7 +3,7 @@ import type * as CodeMirrorAutocompleteType from '@codemirror/autocomplete';
 import type { CompletionContext, CompletionResult, Completion } from '@codemirror/autocomplete';
 import type { EditorView } from '@codemirror/view';
 import type { Extension } from '@codemirror/state';
-import { PluginSettings } from '../../types';
+import { JoplinNote, PluginSettings } from '../../types';
 import { GET_FILTERED_TOKENS_CMD, GET_SETTINGS_CMD } from '../../constants';
 import escape from '../../utils/escapeRegExp';
 
@@ -24,7 +24,7 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
 
     if (!match || (match.from === match.to && !context.explicit)) return null;
 
-    const tokens = await _context.postMessage({
+    const tokens: JoplinNote[] = await _context.postMessage({
       command: GET_FILTERED_TOKENS_CMD,
       query: {
         prefix: match.text.substring(prefix.length).trimEnd(),
