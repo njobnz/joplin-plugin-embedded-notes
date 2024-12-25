@@ -3,6 +3,7 @@ import type * as CodeMirrorAutocompleteType from '@codemirror/autocomplete';
 import type { CompletionContext, CompletionResult, Completion } from '@codemirror/autocomplete';
 import type { EditorView } from '@codemirror/view';
 import type { Extension } from '@codemirror/state';
+import { PluginSettings } from '../../types';
 import { GET_FILTERED_TOKENS_CMD, GET_SETTINGS_CMD } from '../../constants';
 import escape from '../../utils/escapeRegExp';
 
@@ -11,14 +12,14 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
     require('@codemirror/autocomplete') as typeof CodeMirrorAutocompleteType;
 
   const completeToken = async (context: CompletionContext): Promise<CompletionResult> => {
-    const { prefix, suffix, idOnly, autocomplete } = await _context.postMessage({
+    const { prefix, suffix, idOnly, autocomplete }: PluginSettings = await _context.postMessage({
       command: GET_SETTINGS_CMD,
       values: ['prefix', 'suffix', 'idOnly', 'autocomplete'],
     });
 
-    if (!autocomplete) return null;
+    if (!prefix && !suffix && !autocomplete) return null;
 
-    const pattern = new RegExp(`${escape(prefix)}[^${escape(prefix)}]*`);
+    const pattern = new RegExp(`${escape(prefix)}[^${escape(prefix)}${escape(suffix)}\\n]*`);
     const match = context.matchBefore(pattern);
 
     if (!match || (match.from === match.to && !context.explicit)) return null;
@@ -26,11 +27,11 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
     const tokens = await _context.postMessage({
       command: GET_FILTERED_TOKENS_CMD,
       query: {
-        prefix: match.text.substring(prefix.length),
+        prefix: match.text.substring(prefix.length).trimEnd(),
       },
     });
 
-    if (!tokens && tokens.length) return null;
+    if (!tokens && !tokens.length) return null;
 
     const createApplyCompletionFn = (noteTitle: string, noteId: string) => {
       return (view: EditorView, _completion: Completion, from: number, to: number) => {
@@ -46,7 +47,7 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
       completions.push({
         apply: createApplyCompletionFn(note.title, note.id),
         label: note.title,
-        detail: `(${note.id})`,
+        detail: idOnly ? `(${note.id})` : '',
       });
     }
 
