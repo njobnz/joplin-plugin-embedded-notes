@@ -13,14 +13,14 @@ export default _context => ({
     md.renderer.rules.fence = (tokens, idx, options, env, self) => {
       const token = tokens[idx];
 
-      if (setting<boolean>('fenceOnly') && token.type === 'fence' && !isRendering) {
+      if (setting<boolean>('fenceOnly') && !isRendering) {
         const embeddings = readEmbeddableNotes();
         const isEmbedded = embeddings && token.info.includes('embedded');
         const isMarkdown = isEmbedded && token.info.includes('markdown');
 
         if (isEmbedded) {
           const content = token.content;
-          token.content = replaceTokens(token.content, embeddings);
+          token.content = replaceTokens(content, embeddings);
 
           let html = '';
           if (isMarkdown) {
@@ -46,22 +46,23 @@ export default _context => ({
           }
 
           if (!html) {
-            html = renderFence(tokens, idx, options, env, self);
+            const text = renderFence(tokens, idx, options, env, self);
 
             // Joplin markdown highlighter wraps the content its own "joplin-editable" element.
             // Extract just the content block from the rendered HTML.
             // Code highlighting remains applied to the embedded note.
-            const start = html.indexOf('</pre>') + 6;
-            const end = html.lastIndexOf('</div>');
-
-            html = html.slice(start, end);
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const div = doc.querySelector('.joplin-editable');
+            doc.querySelectorAll('.joplin-source').forEach(el => el.remove());
+            html = div ? div.outerHTML : text;
           }
 
           return `
-            <div class="joplin-editable embedded-note embedded-note-fence">
+            <div class="joplin-editable embedded-notes-fence">
               <pre
                 class="joplin-source"
-                data-joplin-language="${md.utils.escapeHtml(token.info)}"
+                data-joplin-language="${md.utils.escapeHtml(token.info.split(' ').join('+'))}"
                 data-joplin-source-open="${token.markup}${md.utils.escapeHtml(token.info)}&NewLine;"
                 data-joplin-source-close="${token.markup}"
               >${md.utils.escapeHtml(content)}</pre>
