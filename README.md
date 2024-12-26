@@ -9,7 +9,7 @@ A plugin for Joplin that enables referencing content from other notes using plac
 ## Usage
 
 > [!CAUTION]  
-> *Using the [Rich Text](https://joplinapp.org/help/apps/rich_text_editor/) editor will overwrite all tokens with embedded content upon saving. To avoid this, consider enabling the [code blocks only](#code-blocks) feature when using the Rich Text editor.*
+> *Using the [Rich Text](https://joplinapp.org/help/apps/rich_text_editor/) editor will overwrite all tokens with embedded content when saving documents. To preserve tokens, always use the Markdown editor.*
 
 ### Referencing Notes
 
@@ -49,8 +49,8 @@ With this setting enabled, add the following headers within fenced code blocks t
 ```
 ````
 
-> [!NOTE]
-> *This mode provides limited support for the [Rich Text](https://joplinapp.org/help/apps/rich_text_editor/) editor. When enabled, the Rich Text editor will not overwrite tokens when saving the note.*
+> [!CAUTION]
+> *This mode provides limited support for the [Rich Text](https://joplinapp.org/help/apps/rich_text_editor/) editor. Tokens may still be overridden when editing the document. **Using the Markdown editor is strongly encouraged.***
 
 ### Embedded Links
 
