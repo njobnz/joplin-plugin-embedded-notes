@@ -8,6 +8,9 @@ A plugin for Joplin that enables referencing content from other notes using plac
 
 ## Usage
 
+> [!CAUTION]  
+> *Using the [Rich Text](https://joplinapp.org/help/apps/rich_text_editor/) editor will overwrite all tokens with embedded content upon saving. To avoid this, consider enabling the [code blocks only](#code-blocks) feature when using the Rich Text editor.*
+
 ### Referencing Notes
 
 To reference the content of another note, use the following syntax:
@@ -28,7 +31,7 @@ Alternatively, reference a note using its ID:
 
 Token replacement can be restricted to fenced code blocks by enabling the **Code blocks only** option in the settings panel.
 
-When this setting is enabled, reference content within fenced code blocks by adding the following headers:
+With this setting enabled, add the following headers within fenced code blocks to reference content:
 
 - Use `embedded` to replace tokens within the block.
 
@@ -38,13 +41,16 @@ When this setting is enabled, reference content within fenced code blocks by add
 ```
 ````
 
-- Use `embedded+markdown` to display the content using the markdown renderer.
+- Use `embedded` and `markdown` to display the content using the markdown renderer.
 
 ````text
-```embedded+markdown
+```embedded markdown
 %^Note containing Markdown^%
 ```
 ````
+
+> [!NOTE]
+> *This mode provides limited support for the [Rich Text](https://joplinapp.org/help/apps/rich_text_editor/) editor. When enabled, the Rich Text editor will not overwrite tokens when saving the note.*
 
 ### Embedded Links
 
@@ -57,7 +63,7 @@ Links can also be displayed in a separate panel. This can be enabled through the
 
 ### Filtering Notes
 
-The **Tag filter** ***restricts named tokens*** to notes with the specified tag. Notes without this tag can still be accessed through their unique IDs.
+The **Tag filter** ***restricts named tokens*** to notes with the specified tag. Notes without this tag can still be accessed using their unique IDs.
 
 Generic search queries are also supported. For example:
 
@@ -65,7 +71,8 @@ Generic search queries are also supported. For example:
 notebook:"Snippets"
 ```
 
-***Note:** Applying a filter may help reduce memory usage and improve performance, especially when working with a large database of notes.*
+> [!NOTE]
+> *Applying a filter may help reduce memory usage and improve performance, especially when working with a large database of notes.*
 
 ### Generate Note
 
