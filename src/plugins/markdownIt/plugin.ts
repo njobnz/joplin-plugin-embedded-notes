@@ -55,7 +55,7 @@ export default _context => ({
             const doc = parser.parseFromString(text, 'text/html');
             const div = doc.querySelector('.joplin-editable');
             doc.querySelectorAll('.joplin-source').forEach(el => el.remove());
-            html = div ? div.outerHTML : text;
+            html = div ? div.innerHTML : text;
           }
 
           return `
