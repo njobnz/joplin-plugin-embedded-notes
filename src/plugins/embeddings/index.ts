@@ -30,8 +30,10 @@ export default class EmbeddingsView {
 
   build = async (): Promise<void> => {
     if (!this.app && this.panel) return;
+
     this.panel = await joplin.views.panels.create(EMBEDDED_LINKS_PANEL_ID);
     const html = this.app.renderer.render(localization.message__reloadPanel);
+
     await joplin.views.panels.setHtml(this.panel, await this.content(html));
     await joplin.views.panels.addScript(this.panel, './plugins/embeddings/assets/panel.css');
     await joplin.views.panels.addScript(this.panel, './plugins/embeddings/assets/panel.js');
@@ -43,15 +45,22 @@ export default class EmbeddingsView {
     if (!this.app) return;
 
     if (await this.setting<boolean>('showPanel')) {
-      if (!this.panel) await this.build();
-      else await joplin.views.panels.show(this.panel);
+      if (!this.panel) {
+        await this.build();
+      } else {
+        await joplin.views.panels.show(this.panel);
+      }
 
       if (this.panel) {
         const links = await this.app.getEmbeddedLinks(true, true);
         links.head = links.head.replace(/<\/?h[1-6]\b/g, match => (match[1] === '/' ? '</h1' : '<h1'));
         await joplin.views.panels.setHtml(this.panel, await this.content(`${links.head}${links.body}`));
-      } else console.error('Failed to initialize embedded links panel.');
-    } else if (this.panel) await joplin.views.panels.hide(this.panel);
+      } else {
+        console.error('Failed to initialize embedded links panel.');
+      }
+    } else if (this.panel) {
+      await joplin.views.panels.hide(this.panel);
+    }
   };
 
   init = async (): Promise<void> => {
