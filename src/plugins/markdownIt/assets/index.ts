@@ -74,7 +74,7 @@ export class EmbeddedNotes {
     const pattern = /^joplin-content:\/\/note-viewer\/(.*)\/\/([0-9A-Fa-f]{32})$/;
 
     for (const element of elements) {
-      const resourceUrl = element.src || element.href;
+      const resourceUrl = element.src || element.title;
       if (!pattern.test(resourceUrl)) continue;
       const resourceId = resourceUrl.slice(-32);
 
@@ -86,12 +86,11 @@ export class EmbeddedNotes {
         continue;
       }
 
-      if (element.tagName !== 'A' || element.nextElementSibling || element.firstElementChild) continue;
+      if (element.tagName !== 'A') continue;
 
       const { title, mime, file_extension } = (await this.fetchData(['resources', resourceId], {
         fields: ['title', 'mime', 'file_extension'],
       })) as any;
-      const type = mime.split('/')[0];
 
       element.setAttribute('data-resource-id', resourceId);
       element.setAttribute('title', title);
@@ -101,12 +100,15 @@ export class EmbeddedNotes {
         `ipcProxySendToHost("joplin://${resourceId}", { resourceId: "${resourceId}" }); return false;`
       );
 
-      const iconEl = document.createElement('span');
+      const type = mime.split('/')[0];
       const icon = ['audio', 'video', 'image'].includes(type) ? `-${type}` : '';
+
+      const iconEl = document.createElement('span');
       iconEl.className = `resource-icon fa-file${icon}`;
       element.prepend(iconEl);
 
-      if (type === 'audio' || type === 'video') {
+      const resourceEl = element.nextElementSibling;
+      if (['audio', 'video'].includes(type) && (!resourceEl || resourceEl.tagName !== type.toUpperCase())) {
         const mediaEl = document.createElement(type);
         mediaEl.className = `media-player media-${type}`;
         mediaEl.controls = true;
