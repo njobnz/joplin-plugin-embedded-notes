@@ -73,8 +73,9 @@ export class EmbeddedNotes {
 
   async updateResources(): Promise<void> {
     const pattern = new RegExp(`^joplin-content:\/\/note-viewer\/(.*)\/\/([0-9A-Fa-f]{32})$`);
+    const elements = document.querySelectorAll('video[src], audio[src], source[src], img[src]') as any;
 
-    document.querySelectorAll('img').forEach(async img => {
+    elements.forEach(async img => {
       if (!pattern.test(img.src)) return;
 
       const resourceId = img.src.slice(-32);
