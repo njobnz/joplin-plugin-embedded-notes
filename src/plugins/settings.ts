@@ -1,18 +1,10 @@
 import joplin from 'api';
 import { SettingItem, SettingItemSubType, SettingItemType, SettingStorage } from 'api/types';
 import { PluginSettings } from '../types';
-import {
-  EmbeddedLinksPosition,
-  EmbeddedLinksType,
-  LOCAL_STORE_SETTINGS,
-  LOCAL_STORE_SETTINGS_KEY,
-  SETTINGS_SECTION_NAME,
-} from '../constants';
+import { EmbeddedLinksPosition, EmbeddedLinksType, SETTINGS_SECTION_NAME } from '../constants';
 import localization from '../localization';
 import getSetting from '../utils/getSetting';
 import setSetting from '../utils/setSetting';
-import readSettings from '../utils/readSettings';
-import parseSettings from '../utils/parseSettings';
 import App from '.';
 
 /**
@@ -41,29 +33,6 @@ export default class AppSettings {
    * Set a setting using Joplin API.
    */
   set: (name: string, value?: any) => Promise<void> = setSetting;
-
-  /**
-   * Read stored settings from localStorage.
-   *
-   * @returns {T} The setting value.
-   */
-  read = <T>(name: string): T => readSettings(name);
-
-  /**
-   * Fetches plugin settings from Joplin's API and stores them in localStorage.
-   * Makes settings easily accessible in non-async functions.
-   *
-   * This function is triggered whenever settings are changed.
-   */
-  save = async () => {
-    const settings = {};
-    for (const setting in this.specification) {
-      // Only add settings that are accessed from non-async functions
-      if (!LOCAL_STORE_SETTINGS.includes(setting)) continue;
-      settings[setting] = parseSettings(setting, (await joplin.settings.values(setting))[setting]);
-    }
-    localStorage.setItem(LOCAL_STORE_SETTINGS_KEY, JSON.stringify(settings));
-  };
 
   init = async () => {
     this.specification = {
@@ -230,7 +199,5 @@ export default class AppSettings {
       iconName: 'fas fa-laptop-code',
     });
     await joplin.settings.registerSettings(this.specification);
-    await joplin.settings.onChange(this.save);
-    await this.save();
   };
 }

@@ -1,7 +1,6 @@
 import { MARKDOWNIT_RULERS } from '../../constants';
 import readEmbeddableNotes from '../../modules/readEmbeddableNotes';
 import replaceTokens from '../../utils/replaceTokens';
-import setting from '../../utils/readSettings';
 
 let isRendering = false;
 
@@ -13,7 +12,7 @@ export default _context => ({
     md.renderer.rules.fence = (tokens, idx, options, env, self) => {
       const token = tokens[idx];
 
-      if (setting<boolean>('fenceOnly') && !isRendering) {
+      if (_options.settingValue('fenceOnly') && !isRendering) {
         const embeddings = readEmbeddableNotes();
         const isEmbedded = embeddings && token.info.includes('embedded');
         const isMarkdown = isEmbedded && token.info.includes('markdown');
@@ -76,7 +75,9 @@ export default _context => ({
     };
 
     md.core.ruler.before('normalize', 'embedded_notes', (state: any) => {
-      if (!setting<boolean>('fenceOnly')) state.src = replaceTokens(state.src, readEmbeddableNotes());
+      if (!_options.settingValue('fenceOnly')) {
+        state.src = replaceTokens(state.src, readEmbeddableNotes(), _options.resourceBaseUrl);
+      }
     });
   },
   assets: () => [{ name: 'assets/index.js' }],

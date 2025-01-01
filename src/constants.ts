@@ -4,9 +4,6 @@ export const CODE_MIRROR_SCRIPT_ID: string = 'tuibyte.EmbeddedNotes.CodeMirror';
 export const SETTINGS_SECTION_NAME: string = 'tuibyte-embedded-notes';
 
 export const LOCAL_STORE_NOTES_KEY: string = 'tuibyte.EmbeddedNotes.Notes';
-export const LOCAL_STORE_SETTINGS_KEY: string = 'tuibyte.EmbeddedNotes.Settings';
-
-export const LOCAL_STORE_SETTINGS: string[] = ['fenceOnly', 'showIcon'];
 
 export const EMBEDDED_LINKS_PANEL_EL: string = 'embedded-notes-panel';
 export const EMBEDDED_LINKS_PANEL_ID: string = 'embedded_notes_panel';

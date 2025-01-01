@@ -220,6 +220,7 @@ export default class App {
 
   init = async (): Promise<void> => {
     await this.settings.init();
+    await this.renderer.init();
     await this.viewer.init();
     await this.editor.init();
     await this.panel.init();

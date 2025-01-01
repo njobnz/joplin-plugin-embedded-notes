@@ -1,10 +1,13 @@
 import { EmbeddedLinksContent } from '../../../types';
 import {
   EmbeddedLinksPosition,
+  GET_DATA_CMD,
   GET_EMBEDDED_LINKS_CMD,
+  GET_GLOBAL_VALUE_CMD,
   GET_SETTING_CMD,
   MARKDOWNIT_SCRIPT_ID,
 } from '../../../constants';
+import escapeRegExp from '../../../utils/escapeRegExp';
 
 declare const webviewApi: any;
 
