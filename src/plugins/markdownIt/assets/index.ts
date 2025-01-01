@@ -3,11 +3,9 @@ import {
   EmbeddedLinksPosition,
   GET_DATA_CMD,
   GET_EMBEDDED_LINKS_CMD,
-  GET_GLOBAL_VALUE_CMD,
   GET_SETTING_CMD,
   MARKDOWNIT_SCRIPT_ID,
 } from '../../../constants';
-import escapeRegExp from '../../../utils/escapeRegExp';
 
 declare const webviewApi: any;
 
@@ -75,15 +73,15 @@ export class EmbeddedNotes {
     const pattern = new RegExp(`^joplin-content:\/\/note-viewer\/(.*)\/\/([0-9A-Fa-f]{32})$`);
     const elements = document.querySelectorAll('video[src], audio[src], source[src], img[src]') as any;
 
-    elements.forEach(async img => {
-      if (!pattern.test(img.src)) return;
+    elements.forEach(async el => {
+      if (!pattern.test(el.src)) return;
 
-      const resourceId = img.src.slice(-32);
+      const resourceId = el.src.slice(-32);
       const { file_extension } = (await this.fetchData(['resources', resourceId], {
         fields: ['file_extension'],
       })) as any;
 
-      if (file_extension) img.src = `${img.src}.${file_extension}`;
+      if (file_extension) el.src = `${el.src}.${file_extension}`;
     });
   }
 
