@@ -30,13 +30,6 @@ export class EmbeddedNotes {
     });
   }
 
-  async fetchGlobal<T>(name: string): Promise<T> {
-    return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
-      command: GET_GLOBAL_VALUE_CMD,
-      name,
-    });
-  }
-
   async fetchSetting<T>(name: string): Promise<T> {
     return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
       command: GET_SETTING_CMD,
@@ -79,8 +72,7 @@ export class EmbeddedNotes {
   }
 
   async updateResources(): Promise<void> {
-    const resourceDir = await this.fetchGlobal<string>('resourceDir');
-    const pattern = new RegExp(`^joplin-content:\/\/note-viewer\/${escapeRegExp(resourceDir)}\/\/[0-9A-Fa-f]{32}$`);
+    const pattern = new RegExp(`^joplin-content:\/\/note-viewer\/(.*)\/\/([0-9A-Fa-f]{32})$`);
 
     document.querySelectorAll('img').forEach(async img => {
       if (!pattern.test(img.src)) return;
