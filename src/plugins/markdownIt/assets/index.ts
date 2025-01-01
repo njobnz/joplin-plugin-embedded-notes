@@ -6,6 +6,7 @@ import {
   GET_SETTING_CMD,
   MARKDOWNIT_SCRIPT_ID,
 } from '../../../constants';
+import { getClassNameForMimeType } from 'font-awesome-filetypes';
 
 declare const webviewApi: any;
 
@@ -101,10 +102,10 @@ export class EmbeddedNotes {
       );
 
       const type = mime.split('/')[0];
-      const icon = ['audio', 'video', 'image'].includes(type) ? `-${type}` : '';
+      const icon = mime ? getClassNameForMimeType(mime) : 'fa-joplin';
 
       const iconEl = document.createElement('span');
-      iconEl.className = `resource-icon fa-file${icon}`;
+      iconEl.className = `resource-icon ${icon}`;
       element.prepend(iconEl);
 
       const resourceEl = element.nextElementSibling;
