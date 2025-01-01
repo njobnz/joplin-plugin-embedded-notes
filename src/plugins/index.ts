@@ -10,6 +10,8 @@ import {
   GET_SETTING_CMD,
   SET_SETTING_CMD,
   OPEN_NOTE_CMD,
+  GET_DATA_CMD,
+  GET_GLOBAL_VALUE_CMD,
 } from '../constants';
 import localization from '../localization';
 import escapeMarkdown from '../utils/escapeMarkdown';
@@ -54,6 +56,8 @@ export default class App {
         return this.getFilteredTokens(message?.query);
       case GET_EMBEDDED_LINKS_CMD:
         return await this.getEmbeddedLinks(!!message?.isFound);
+      case GET_GLOBAL_VALUE_CMD:
+        return await joplin.settings.globalValue(message?.name);
       case GET_SETTINGS_CMD:
         const values = message?.values;
         if (!Array.isArray(values)) return {};
@@ -63,6 +67,8 @@ export default class App {
         return await this.setting(message?.name);
       case SET_SETTING_CMD:
         return await this.setting(message?.name, message?.value);
+      case GET_DATA_CMD:
+        return await joplin.data.get(message?.path, message?.query);
       case OPEN_NOTE_CMD:
         try {
           if (!message?.noteId) throw Error('Note ID is missing.');

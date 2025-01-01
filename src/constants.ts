@@ -9,10 +9,12 @@ export const EMBEDDED_LINKS_PANEL_EL: string = 'embedded-notes-panel';
 export const EMBEDDED_LINKS_PANEL_ID: string = 'embedded_notes_panel';
 export const GET_FILTERED_TOKENS_CMD: string = 'getFilteredTokens';
 export const GET_EMBEDDED_LINKS_CMD: string = 'getEmbeddedLinks';
+export const GET_GLOBAL_VALUE_CMD: string = 'getGlobalValue';
 export const GET_SETTINGS_CMD: string = 'getSettings';
 export const GET_SETTING_CMD: string = 'getSetting';
 export const SET_SETTING_CMD: string = 'setSetting';
 export const OPEN_NOTE_CMD: string = 'openNote';
+export const GET_DATA_CMD: string = 'getData';
 
 export const MARKDOWNIT_RULERS = [
   'footnote_tail2', // https://github.com/ambrt/joplin-plugin-referencing-notes/blob/4469dd69ecb4eeed97bb270ebfa508448c2bbd2b/src/notesReferences.js#L43
