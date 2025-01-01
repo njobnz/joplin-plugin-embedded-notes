@@ -6,6 +6,7 @@ import {
   GET_SETTING_CMD,
   MARKDOWNIT_SCRIPT_ID,
 } from '../../../constants';
+import validateJoplinId from 'src/utils/validateJoplinId';
 
 declare const webviewApi: any;
 
@@ -70,22 +71,55 @@ export class EmbeddedNotes {
   }
 
   async updateResources(): Promise<void> {
-    const pattern = new RegExp(`^joplin-content:\/\/note-viewer\/(.*)\/\/([0-9A-Fa-f]{32})$`);
-    const elements = document.querySelectorAll('video[src], audio[src], source[src], img[src]') as any;
+    const elements = document.querySelectorAll('a[href], img[src]') as any;
+    const pattern = /^joplin-content:\/\/note-viewer\/(.*)\/\/([0-9A-Fa-f]{32})$/;
 
-    elements.forEach(async el => {
-      if (!pattern.test(el.src)) return;
+    for (const element of elements) {
+      const resourceUrl = element.src || element.href;
+      if (!pattern.test(resourceUrl)) continue;
+      const resourceId = resourceUrl.slice(-32);
 
-      const resourceId = el.src.slice(-32);
-      const { file_extension } = (await this.fetchData(['resources', resourceId], {
-        fields: ['file_extension'],
-      })) as any;
-
-      if (file_extension) {
-        const cacheBuster = `?t=${new Date().getTime()}`;
-        el.src = `${el.src}.${file_extension}${cacheBuster}`;
+      if (element.tagName === 'IMG') {
+        const { file_extension } = (await this.fetchData(['resources', resourceId], {
+          fields: ['file_extension'],
+        })) as any;
+        if (file_extension) element.src = `${resourceUrl}.${file_extension}?t=${Date.now()}`;
+        continue;
       }
-    });
+
+      if (element.tagName !== 'A' || element.nextElementSibling || element.firstElementChild) continue;
+
+      const { title, mime, file_extension } = (await this.fetchData(['resources', resourceId], {
+        fields: ['title', 'mime', 'file_extension'],
+      })) as any;
+      const type = mime.split('/')[0];
+
+      element.setAttribute('data-resource-id', resourceId);
+      element.setAttribute('title', title);
+      element.setAttribute('type', mime);
+      element.setAttribute(
+        'onclick',
+        `ipcProxySendToHost("joplin://${resourceId}", { resourceId: "${resourceId}" }); return false;`
+      );
+
+      const iconEl = document.createElement('span');
+      const icon = ['audio', 'video', 'image'].includes(type) ? `-${type}` : '';
+      iconEl.className = `resource-icon fa-file${icon}`;
+      element.prepend(iconEl);
+
+      if (type === 'audio' || type === 'video') {
+        const mediaEl = document.createElement(type);
+        mediaEl.className = `media-player media-${type}`;
+        mediaEl.controls = true;
+
+        const sourceEl = document.createElement('source');
+        sourceEl.src = `${resourceUrl}.${file_extension}`;
+        sourceEl.type = mime;
+
+        mediaEl.appendChild(sourceEl);
+        element.after(mediaEl);
+      }
+    }
   }
 
   async noteUpdateHandler(): Promise<void> {
