@@ -22,6 +22,21 @@ export class EmbeddedNotes {
     );
   }
 
+  async fetchData<T>(path: string[], query: any): Promise<T> {
+    return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
+      command: GET_DATA_CMD,
+      path,
+      query,
+    });
+  }
+
+  async fetchGlobal<T>(name: string): Promise<T> {
+    return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
+      command: GET_GLOBAL_VALUE_CMD,
+      name,
+    });
+  }
+
   async fetchSetting<T>(name: string): Promise<T> {
     return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
       command: GET_SETTING_CMD,
@@ -63,9 +78,30 @@ export class EmbeddedNotes {
     this.insertEmbeddings(content, header, embeddings);
   }
 
+  async updateResources(): Promise<void> {
+    const resourceDir = await this.fetchGlobal<string>('resourceDir');
+    const pattern = new RegExp(`^joplin-content:\/\/note-viewer\/${escapeRegExp(resourceDir)}\/\/[0-9A-Fa-f]{32}$`);
+
+    document.querySelectorAll('img').forEach(async img => {
+      if (!pattern.test(img.src)) return;
+
+      const resourceId = img.src.slice(-32);
+      const { file_extension } = (await this.fetchData(['resources', resourceId], {
+        fields: ['file_extension'],
+      })) as any;
+
+      if (file_extension) img.src = `${img.src}.${file_extension}`;
+    });
+  }
+
+  async noteUpdateHandler(): Promise<void> {
+    await this.writeEmbeddigs();
+    await this.updateResources();
+  }
+
   init(): void {
-    this.writeEmbeddigs();
-    document.addEventListener('joplin-noteDidUpdate', () => this.writeEmbeddigs());
+    this.noteUpdateHandler();
+    document.addEventListener('joplin-noteDidUpdate', () => this.noteUpdateHandler());
   }
 }
 

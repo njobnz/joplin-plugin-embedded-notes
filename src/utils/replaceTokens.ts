@@ -8,7 +8,7 @@ import escapeRegExp from './escapeRegExp';
  * @param {Record<string, EmbeddableNote>} embeddings - A mapping of note titles and ids to their note object.
  * @returns {string} The replaced text.
  */
-export default (input: string, embeddings: Record<string, EmbeddableNote>): string => {
+export default (input: string, embeddings: Record<string, EmbeddableNote>, resourceBaseUrl?: string): string => {
   if (!input || !embeddings) return input;
 
   return Object.keys(embeddings)
@@ -17,8 +17,13 @@ export default (input: string, embeddings: Record<string, EmbeddableNote>): stri
     .reduce((text, token) => {
       const embed = embeddings[token];
       if (!embed?.note?.body) return text;
-
+      const body = resourceBaseUrl ? replaceResourceUrls(embed.note.body, resourceBaseUrl) : embed.note.body;
       const pattern = new RegExp(escapeRegExp(token), 'g');
-      return text.replace(pattern, embed.note.body);
+      return text.replace(pattern, body);
     }, input);
+};
+
+const replaceResourceUrls = (content: string, resourceBaseUrl: string): string => {
+  const pattern = new RegExp(`]\\((:/([0-9A-Fa-f]{32}))\\)`, 'g');
+  return content.replace(pattern, (match, p1, p2) => match.replace(p1, `${resourceBaseUrl}/${p2}`));
 };

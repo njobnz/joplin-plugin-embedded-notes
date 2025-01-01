@@ -19,7 +19,7 @@ export default _context => ({
 
         if (isEmbedded) {
           const content = token.content;
-          token.content = replaceTokens(content, embeddings);
+          token.content = replaceTokens(content, embeddings, _options.resourceBaseUrl);
 
           let html = '';
           if (isMarkdown) {
