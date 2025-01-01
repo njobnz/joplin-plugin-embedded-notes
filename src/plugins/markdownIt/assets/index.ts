@@ -6,7 +6,6 @@ import {
   GET_SETTING_CMD,
   MARKDOWNIT_SCRIPT_ID,
 } from '../../../constants';
-import validateJoplinId from 'src/utils/validateJoplinId';
 
 declare const webviewApi: any;
 
