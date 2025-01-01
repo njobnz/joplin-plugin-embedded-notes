@@ -81,7 +81,10 @@ export class EmbeddedNotes {
         fields: ['file_extension'],
       })) as any;
 
-      if (file_extension) el.src = `${el.src}.${file_extension}`;
+      if (file_extension) {
+        const cacheBuster = `?t=${new Date().getTime()}`;
+        el.src = `${el.src}.${file_extension}${cacheBuster}`;
+      }
     });
   }
 
