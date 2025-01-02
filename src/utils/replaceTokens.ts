@@ -24,6 +24,6 @@ export default (input: string, embeddings: Record<string, EmbeddableNote>, resou
 };
 
 const replaceResourceUrls = (content: string, resourceBaseUrl: string): string => {
-  const pattern = new RegExp(`]\\((:/([0-9A-Fa-f]{32}))\\)`, 'g');
+  const pattern = new RegExp(`]\\((:/([0-9A-Fa-f]{32}(|#[^\\s]*)(|\\s".*?")))\\)`, 'g');
   return content.replace(pattern, (match, p1, p2) => match.replace(p1, `${resourceBaseUrl}/${p2}`));
 };

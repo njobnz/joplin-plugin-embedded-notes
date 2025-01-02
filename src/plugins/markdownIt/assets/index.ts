@@ -80,31 +80,33 @@ export class EmbeddedNotes {
 
   async updateResources(): Promise<void> {
     const elements = document.querySelectorAll('a[href], img[src]') as any;
-    const pattern = /^joplin-content:\/\/note-viewer\/(.*)\/\/([0-9A-Fa-f]{32})(|#[^\s]*)(|\s".*?")$/;
+    const pattern = /^(joplin-content:\/\/note-viewer\/.*\/\/([0-9A-Fa-f]{32}))(|#[^\s]*)$/;
 
     for (const element of elements) {
-      const resourceUrl = element.src || element.href;
-      const match = resourceUrl.match(pattern);
+      const match = (element.src || element.href).match(pattern);
       if (!match) continue;
-      const resourceId = match[2];
 
-      const resource = (await this.fetchData(['resources', resourceId], {
-        fields: element.tagName === 'IMG' ? ['file_extension'] : ['title', 'mime', 'file_extension'],
+      const id = match[2];
+      const url = match[1];
+      const hash = match[3];
+
+      const resource = (await this.fetchData(['resources', id], {
+        fields: ['title', 'mime', 'file_extension'],
       })) as any;
 
-      if (element.tagName === 'IMG') {
-        if (resource.file_extension) element.src = `${resourceUrl}.${resource.file_extension}?t=${Date.now()}`;
-      }
+      if (element.tagName === 'IMG' && resource.file_extension)
+        element.src = `${url}.${resource.file_extension}?t=${Date.now()}`;
 
       if (element.tagName === 'A') {
         const { title, mime, file_extension } = resource;
-        element.setAttribute('data-resource-id', resourceId);
-        element.setAttribute('title', title);
+
+        if (pattern.test(element.title)) element.setAttribute('title', title);
+        element.setAttribute('data-resource-id', id);
         element.setAttribute('type', mime);
-        element.setAttribute('href', `${element.href}.${file_extension}`);
+        element.setAttribute('href', `${url}.${file_extension}`);
         element.setAttribute(
           'onclick',
-          `ipcProxySendToHost("joplin://${resourceId}", { resourceId: "${resourceId}" }); return false;`
+          `ipcProxySendToHost("joplin://${id}${hash}", { resourceId: "${id}" }); return false;`
         );
 
         const icon = mime ? getClassNameForMimeType(mime) : 'fa-joplin';
@@ -115,8 +117,8 @@ export class EmbeddedNotes {
         const type = mime.split('/')[1] === 'pdf' ? 'pdf' : mime.split('/')[0];
         if (['audio', 'video', 'pdf'].includes(type)) {
           const isPdf = type === 'pdf';
-          const globalName = isPdf ? 'pdfViewer' : `${type}Player`;
-          const isEnabled = await this.fetchGlobal<boolean>(`markdown.plugin.${globalName}`);
+          const pluginName = isPdf ? 'pdfViewer' : `${type}Player`;
+          const isEnabled = await this.fetchGlobal<boolean>(`markdown.plugin.${pluginName}`);
           const resourceEl = element.nextElementSibling;
 
           if (isEnabled && (!resourceEl || resourceEl.tagName !== type.toUpperCase())) {
@@ -124,11 +126,11 @@ export class EmbeddedNotes {
             mediaEl.className = `media-player media-${type}`;
 
             if (isPdf) {
-              mediaEl.data = `${resourceUrl}.${file_extension}`;
+              mediaEl.data = `${url}.${file_extension}`;
               mediaEl.type = mime;
             } else {
               const sourceEl = document.createElement('source');
-              sourceEl.src = `${resourceUrl}.${file_extension}`;
+              sourceEl.src = `${url}.${file_extension}`;
               sourceEl.type = mime;
 
               mediaEl.controls = true;
