@@ -92,16 +92,10 @@ export class EmbeddedNotes {
 
       const [, url, id, hash] = match;
 
-      const onClick = [
-        'onclick',
-        `ipcProxySendToHost("joplin://${id}${hash}", { resourceId: "${id}" }); return false;`,
-      ];
-
       const resource = (await this.fetchData(['resources', id], {
         fields: ['title', 'mime', 'file_extension'],
       })) as any;
 
-      const mime = resource?.mime;
       const href = resource?.file_extension ? `${url}.${resource.file_extension}` : url;
 
       // Update internal embedded image src attributes
@@ -112,17 +106,22 @@ export class EmbeddedNotes {
 
       if (element.tagName !== 'A') continue;
 
-      // Create internal embedded note and resource anchor tags
+      // Update internal embedded note and resource anchor tags
       if (pattern.test(element.title) && resource?.title !== null) {
         element.setAttribute('title', resource.title);
       }
       element.setAttribute('data-resource-id', id);
       element.setAttribute('href', resource ? href : '#');
-      element.setAttribute(...onClick);
+      element.setAttribute(
+        'onclick',
+        `ipcProxySendToHost("joplin://${id}${hash}", { resourceId: "${id}" }); return false;`
+      );
 
       // Build resource icon
+      const mime = resource?.mime;
+      const icon = mime ? getClassNameForMimeType(mime) : 'fa-joplin';
       const iconEl = document.createElement('span');
-      iconEl.className = `resource-icon ${mime ? getClassNameForMimeType(mime) : 'fa-joplin'}`;
+      iconEl.className = `resource-icon ${icon}`;
       element.prepend(iconEl);
 
       if (!resource) continue;
@@ -130,6 +129,7 @@ export class EmbeddedNotes {
       // Create internal embedded resource containers for video, audio and pdfs
       const type = mime.split('/')[1] === 'pdf' ? 'pdf' : mime.split('/')[0];
       if (!['audio', 'video', 'pdf'].includes(type)) continue;
+
       const isPdf = type === 'pdf';
 
       // Test if the markdown plugin for the resource type is enabled
