@@ -28,8 +28,8 @@ export default (input: string, embeddings: Record<string, EmbeddableNote>, resou
  * Prepend the resource base URL to resource URLs in the content.
  *
  * Embedded resources from referenced notes are not loaded when the
- * markdown renderer is called. The resource base URL is prepended
- * to resource URLs, but file extensions and mime type are not available
+ * markdown renderer is called. Here the resource base URL is prepended
+ * to resource URLs, but file extension and mime type are not available
  * and need to be fetched from the API. Since the Joplin API cannot be
  * queried inside markdownIt rules, `updateResources` method is called
  * after the markdown is rendered to fetch additional resource data.
@@ -39,7 +39,7 @@ export default (input: string, embeddings: Record<string, EmbeddableNote>, resou
  *
  * @param {string} content - The content.
  * @param {string} resourceBaseUrl - The base URL for resources.
- * @returns {string} The replaced text.
+ * @returns {string} The replaced content.
  */
 const replaceResourceUrls = (content: string, resourceBaseUrl: string): string => {
   const pattern = new RegExp(`]\\((:/([0-9A-Fa-f]{32}(|#[^\\s]*)(|\\s".*?")))\\)`, 'g');

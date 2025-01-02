@@ -90,61 +90,73 @@ export class EmbeddedNotes {
       const match = (element.src || element.href).match(pattern);
       if (!match) continue;
 
-      const id = match[2];
-      const url = match[1];
-      const hash = match[3];
+      const [, url, id, hash] = match;
+
+      const onClick = [
+        'onclick',
+        `ipcProxySendToHost("joplin://${id}${hash}", { resourceId: "${id}" }); return false;`,
+      ];
 
       const resource = (await this.fetchData(['resources', id], {
         fields: ['title', 'mime', 'file_extension'],
       })) as any;
 
-      if (element.tagName === 'IMG' && resource.file_extension)
-        element.src = `${url}.${resource.file_extension}?t=${Date.now()}`;
+      const mime = resource?.mime;
+      const href = resource?.file_extension ? `${url}.${resource.file_extension}` : url;
 
-      if (element.tagName === 'A') {
-        const { title, mime, file_extension } = resource;
-
-        if (pattern.test(element.title)) element.setAttribute('title', title);
-        element.setAttribute('data-resource-id', id);
-        element.setAttribute('type', mime);
-        element.setAttribute('href', `${url}.${file_extension}`);
-        element.setAttribute(
-          'onclick',
-          `ipcProxySendToHost("joplin://${id}${hash}", { resourceId: "${id}" }); return false;`
-        );
-
-        const icon = mime ? getClassNameForMimeType(mime) : 'fa-joplin';
-        const iconEl = document.createElement('span');
-        iconEl.className = `resource-icon ${icon}`;
-        element.prepend(iconEl);
-
-        const type = mime.split('/')[1] === 'pdf' ? 'pdf' : mime.split('/')[0];
-        if (['audio', 'video', 'pdf'].includes(type)) {
-          const isPdf = type === 'pdf';
-          const pluginName = isPdf ? 'pdfViewer' : `${type}Player`;
-          const isEnabled = await this.fetchGlobal<boolean>(`markdown.plugin.${pluginName}`);
-          const resourceEl = element.nextElementSibling;
-
-          if (isEnabled && (!resourceEl || resourceEl.tagName !== type.toUpperCase())) {
-            const mediaEl = document.createElement(isPdf ? 'object' : type);
-            mediaEl.className = `media-player media-${type}`;
-
-            if (isPdf) {
-              mediaEl.data = `${url}.${file_extension}`;
-              mediaEl.type = mime;
-            } else {
-              const sourceEl = document.createElement('source');
-              sourceEl.src = `${url}.${file_extension}`;
-              sourceEl.type = mime;
-
-              mediaEl.controls = true;
-              mediaEl.appendChild(sourceEl);
-            }
-
-            element.after(mediaEl);
-          }
-        }
+      // Update internal embedded image src attributes
+      if (element.tagName === 'IMG') {
+        element.src = `${href}?t=${Date.now()}`;
+        continue;
       }
+
+      if (element.tagName !== 'A') continue;
+
+      // Create internal embedded note and resource anchor tags
+      if (pattern.test(element.title) && resource?.title !== null) {
+        element.setAttribute('title', resource.title);
+      }
+      element.setAttribute('data-resource-id', id);
+      element.setAttribute('href', resource ? href : '#');
+      element.setAttribute(...onClick);
+
+      // Build resource icon
+      const iconEl = document.createElement('span');
+      iconEl.className = `resource-icon ${mime ? getClassNameForMimeType(mime) : 'fa-joplin'}`;
+      element.prepend(iconEl);
+
+      if (!resource) continue;
+
+      // Create internal embedded resource containers for video, audio and pdfs
+      const type = mime.split('/')[1] === 'pdf' ? 'pdf' : mime.split('/')[0];
+      if (!['audio', 'video', 'pdf'].includes(type)) continue;
+      const isPdf = type === 'pdf';
+
+      // Test if the markdown plugin for the resource type is enabled
+      const isEnabled = await this.fetchGlobal<boolean>(`markdown.plugin.${isPdf ? 'pdfViewer' : `${type}Player`}`);
+
+      // Test if the container for the resource type already exists
+      const resourceEl = element.nextElementSibling;
+      if (!isEnabled || resourceEl?.tagName === type.toUpperCase()) continue;
+
+      // Create the container for the resource type
+      const mediaEl = document.createElement(isPdf ? 'object' : type);
+      mediaEl.className = `media-player media-${type}`;
+
+      if (isPdf) {
+        mediaEl.data = href;
+        mediaEl.type = mime;
+      } else {
+        const sourceEl = document.createElement('source');
+        sourceEl.src = href;
+        sourceEl.type = mime;
+
+        mediaEl.controls = true;
+        mediaEl.appendChild(sourceEl);
+      }
+
+      element.setAttribute('type', mime);
+      element.after(mediaEl);
     }
   }
 
