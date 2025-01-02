@@ -68,7 +68,11 @@ export default class App {
       case SET_SETTING_CMD:
         return await this.setting(message?.name, message?.value);
       case GET_DATA_CMD:
-        return await joplin.data.get(message?.path, message?.query);
+        try {
+          return await joplin.data.get(message?.path, message?.query);
+        } catch (exception) {
+          return null;
+        }
       case OPEN_NOTE_CMD:
         try {
           if (!message?.noteId) throw Error('Note ID is missing.');
