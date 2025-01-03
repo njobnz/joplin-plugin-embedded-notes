@@ -75,9 +75,13 @@ export default _context => ({
     };
 
     md.core.ruler.before('normalize', 'embedded_notes', (state: any) => {
-      if (!_options.settingValue('fenceOnly')) {
-        state.src = replaceTokens(state.src, readEmbeddableNotes(), _options.resourceBaseUrl);
-      }
+      if (_options.settingValue('fenceOnly')) return;
+
+      state.src = replaceTokens(
+        state.src,
+        readEmbeddableNotes(),
+        _options.settingValue('showResources') ? _options.resourceBaseUrl : null
+      );
     });
   },
   assets: () => [{ name: 'assets/index.js' }],

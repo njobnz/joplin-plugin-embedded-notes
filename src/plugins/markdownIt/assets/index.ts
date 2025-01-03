@@ -83,6 +83,8 @@ export class EmbeddedNotes {
    * See `replaceResourceUrls` in `replaceTokens.ts` for more information.
    */
   async updateResources(): Promise<void> {
+    if (!(await this.fetchSetting<string>('showResources'))) return;
+
     const elements = document.querySelectorAll('a[href], img[src]') as any;
     const pattern = /^(joplin-content:\/\/note-viewer\/.*\/\/([0-9A-Fa-f]{32}))(|#[^\s]*)$/;
 

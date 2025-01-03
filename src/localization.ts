@@ -19,10 +19,13 @@ interface AppLocalization {
   setting__listPosition__description: string;
   setting__listType: string;
   setting__listType__description: string;
-  setting__showIcon: string;
-  setting__showIcon__description: string;
   setting__showPanel: string;
   setting__showPanel__description: string;
+  setting__showIcon: string;
+  setting__showIcon__description: string;
+
+  setting__showResources: string;
+  setting__showResources__description: string;
 
   setting__listHeader: string;
   setting__listHeader__description: string;
@@ -50,7 +53,7 @@ const defaultStrings: AppLocalization = {
     'Display a dropdown of token suggestions in the editor when the opening tag is entered.',
   setting__fenceOnly: 'Code blocks only',
   setting__fenceOnly__description:
-    'Restrict token replacement to fenced code blocks (\`\`\`) that include `embedded` in the header.',
+    'Restrict token replacement to fenced code blocks (```) that include `embedded` in the header.',
   setting__idOnly: 'Note IDs only',
   setting__idOnly__description: 'Allow only note IDs to be used as tokens.',
   setting__tag: 'Tag filter',
@@ -62,8 +65,7 @@ const defaultStrings: AppLocalization = {
   setting__suffix__description: 'Closing tag for tokens. (default: ^%)',
 
   setting__listPosition: 'Embedded links',
-  setting__listPosition__description:
-    'Position to display the list of embedded note links in the markdown viewer.',
+  setting__listPosition__description: 'Position to display the list of embedded note links in the markdown viewer.',
   setting__listType: 'List style',
   setting__listType__description: 'Display embedded links as new lines, ordered, or unordered list.',
   setting__showPanel: 'Display panel',
@@ -71,9 +73,11 @@ const defaultStrings: AppLocalization = {
   setting__showIcon: 'Joplin icon',
   setting__showIcon__description: 'Display Joplin link icon next to embedded links.',
 
+  setting__showResources: 'Show resources',
+  setting__showResources__description:
+    'Render embedded resources in referenced content. This setting is experimental and may cause issues.',
   setting__listHeader: 'List header',
-  setting__listHeader__description:
-    'Header text for the embedded links section. (default: Embeddings)',
+  setting__listHeader__description: 'Header text for the embedded links section. (default: Embeddings)',
   setting__listDelimiter: 'List delimiter',
   setting__listDelimiter__description:
     'Defines a custom delimiter to separate embedded links when the "New Line" list style is selected. (Default: \\n)',
