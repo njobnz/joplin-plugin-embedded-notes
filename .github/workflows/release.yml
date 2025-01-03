@@ -5,12 +5,13 @@ on:
     tags:
       - release
 
-permissions:
-  contents: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -26,6 +27,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+          scope: ${{ env.NPM_SCOPE }}
 
       - name: Install dependencies
         run: npm install
@@ -37,7 +40,7 @@ jobs:
         run: npm run dist
 
       - name: Publish release
-        run: npm publish
+        run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
