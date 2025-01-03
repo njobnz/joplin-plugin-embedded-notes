@@ -38,10 +38,42 @@ export default (input: string, embeddings: Record<string, EmbeddableNote>, resou
  * it's not clear how.
  *
  * @param {string} content - The content.
- * @param {string} resourceBaseUrl - The base URL for resources.
+ * @param {string} baseUrl - The base URL for resources.
  * @returns {string} The replaced content.
  */
-const replaceResourceUrls = (content: string, resourceBaseUrl: string): string => {
+const replaceResourceUrls = (content: string, baseUrl: string): string => {
   const pattern = new RegExp(`]\\((:/([0-9A-Fa-f]{32}(|#[^\\s]*)(|\\s".*?")))\\)`, 'g');
-  return content.replace(pattern, (match, p1, p2) => match.replace(p1, `${resourceBaseUrl}/${p2}`));
+  const result = [];
+  const lines = content.split(/(\r?\n)/);
+
+  let inBlock = false;
+  let opening = '';
+
+  // Search for fenced code blocks and ignore resource URLs inside them
+  // TODO: don't replace inside inline code blocks as well
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const match = line.match(/^(\s{0,3})(`{3,})/);
+
+    if (match) {
+      if (!inBlock) {
+        // Opening fence
+        inBlock = true;
+        opening = match[2];
+      } else if (line.trim().startsWith(opening)) {
+        // Closing fence matches opening
+        inBlock = false;
+        opening = '';
+      }
+    }
+
+    // Replace if not in code block
+    if (!inBlock) {
+      result.push(line.replace(pattern, (match, p1, p2) => match.replace(p1, `${baseUrl}/${p2}`)));
+    } else {
+      result.push(line);
+    }
+  }
+
+  return result.join('');
 };
