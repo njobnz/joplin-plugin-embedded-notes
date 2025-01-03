@@ -50,7 +50,7 @@ const replaceResourceUrls = (content: string, baseUrl: string): string => {
   let opening = '';
 
   // Search for fenced code blocks and ignore resource URLs inside them
-  // TODO: don't replace inside inline code blocks as well
+  // TODO: don't replace inside inline code blocks
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const match = line.match(/^(\s{0,3})(`{3,})(?!.*`)/);
@@ -67,8 +67,8 @@ const replaceResourceUrls = (content: string, baseUrl: string): string => {
       }
     }
 
-    // Replace if not in code block
-    if (!inBlock) {
+    // Replace if not in fenced code or unformatted text block
+    if (!inBlock && !/^(\s{4}|\t)/.test(line)) {
       result.push(line.replace(pattern, (match, p1, p2) => match.replace(p1, `${baseUrl}/${p2}`)));
     } else {
       result.push(line);
