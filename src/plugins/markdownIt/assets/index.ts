@@ -107,9 +107,8 @@ export class EmbeddedNotes {
       if (element.tagName !== 'A') continue;
 
       // Update internal embedded note and resource anchor tags
-      if (pattern.test(element.title) && resource?.title !== null) {
+      if (resource && element?.title !== undefined && pattern.test(element.title))
         element.setAttribute('title', resource.title);
-      }
       element.setAttribute('data-resource-id', id);
       element.setAttribute('href', resource ? href : '#');
       element.setAttribute(
