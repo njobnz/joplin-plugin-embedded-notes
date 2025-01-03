@@ -1,9 +1,11 @@
 {
   "name": "joplin-plugin-embedded-notes",
   "version": "1.0.0",
+  "description": "A plugin for Joplin that enables referencing content from other notes using placeholder tokens.",
   "scripts": {
     "dist": "webpack --env joplin-plugin-config=buildMain && webpack --env joplin-plugin-config=buildExtraScripts && webpack --env joplin-plugin-config=createArchive",
     "prepare": "npm run dist",
+    "release": "commit-and-tag-version",
     "updateVersion": "webpack --env joplin-plugin-config=updateVersion",
     "update": "npm install -g generator-joplin && yo joplin --node-package-manager npm --update --force",
     "test": "jest --passWithNoTests"
@@ -21,6 +23,15 @@
     "moduleNameMapper": {
       "^api/types$": "<rootDir>/api/types"
     }
+  },
+  "homepage": "https://github.com/njobnz/joplin-plugin-embedded-notes#readme",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:njobnz/joplin-plugin-embedded-notes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/njobnz/joplin-plugin-embedded-notes/issues",
+    "email": "njobnz@proton.me"
   },
   "license": "MIT",
   "keywords": [
