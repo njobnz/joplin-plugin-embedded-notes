@@ -113,6 +113,7 @@ To avoid ambiguous token matches, it is recommended to use distinct character se
 | List style       | Ordered List | Display embedded links as new lines, ordered, or unordered list.                                                  |
 | Display panel    | No           | Display embedded links in a separate panel.                                                                       |
 | Joplin icon      | Yes          | Display Joplin link icon next to embedded links.                                                                  |
+| Show resources   | No           | Render embedded resources in referenced content. *This setting is experimental and may cause issues.*             |
 | List header      | Embeddings   | Header text for the embedded links section.                                                                       |
 | List delimiter   | \\n          | Defines a custom delimiter to separate embedded links when the "New Line" list style is selected.                 |
 | Panel stylesheet |              | Path to custom CSS for styling the embedded links panel.                                                          |
