@@ -53,7 +53,7 @@ const replaceResourceUrls = (content: string, baseUrl: string): string => {
   // TODO: don't replace inside inline code blocks as well
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const match = line.match(/^(\s{0,3})(`{3,})/);
+    const match = line.match(/^(\s{0,3})(`{3,})(?!.*`)/);
 
     if (match) {
       if (!inBlock) {
