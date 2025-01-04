@@ -79,7 +79,7 @@ const defaultStrings: AppLocalization = {
   setting__showResources__description:
     'Render embedded resources in referenced content. This setting is experimental and may cause issues.',
   setting__newNoteTitle: 'Embedded title',
-  setting__newNoteTitle__description: 'Text to appened to note titles when creating a new note with embedded content.',
+  setting__newNoteTitle__description: 'Text to appened to note titles when creating a new note with embedded content. (Default:  - Embed)',
 
   setting__listHeader: 'List header',
   setting__listHeader__description: 'Header text for the embedded links section. (default: Embeddings)',
