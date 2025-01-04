@@ -241,5 +241,6 @@ export default class App {
 
     await joplin.workspace.onNoteChange(this.onNoteChangeHandler);
     await joplin.workspace.onNoteSelectionChange(loadEmbeddableNotes);
+    loadEmbeddableNotes();
   };
 }

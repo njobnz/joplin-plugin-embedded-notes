@@ -13,7 +13,7 @@ export default _context => ({
       const token = tokens[idx];
 
       if (_options.settingValue('fenceOnly') && !isRendering) {
-        const embeddings = readEmbeddableNotes();
+        const embeddings = readEmbeddableNotes(_options.noteId);
         const isEmbedded = embeddings && token.info.includes('embedded');
         const isMarkdown = isEmbedded && token.info.includes('markdown');
 
@@ -79,7 +79,7 @@ export default _context => ({
 
       state.src = replaceTokens(
         state.src,
-        readEmbeddableNotes(),
+        readEmbeddableNotes(_options.noteId),
         _options.settingValue('showResources') ? _options.resourceBaseUrl : null
       );
     });
