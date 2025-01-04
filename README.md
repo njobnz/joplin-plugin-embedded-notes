@@ -93,9 +93,9 @@ The new note will open automatically in the editor.
 
 Typing the opening tag (%^) triggers a dropdown menu listing available note titles. Selecting a title will autocomplete the token.
 
-### Tag customisation
+### Token Customisation
 
-The tag prefix and suffix can be customised in the settings panel. Both settings must be defined.
+The token prefix and suffix can be customised in the settings panel. Both settings must be defined.
 
 To avoid ambiguous token matches, it is recommended to use distinct character sequences for opening and closing tags. For example:
 
