@@ -159,6 +159,17 @@ export default class AppSettings {
         advanced: true,
       },
 
+      newNoteTitle: {
+        public: true,
+        section: SETTINGS_SECTION_NAME,
+        storage: SettingStorage.File,
+        label: localization.setting__newNoteTitle,
+        description: localization.setting__newNoteTitle__description,
+        type: SettingItemType.String,
+        value: ' - Embed',
+        advanced: true,
+      },
+
       listHeader: {
         public: true,
         section: SETTINGS_SECTION_NAME,

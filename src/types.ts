@@ -12,6 +12,7 @@ export interface PluginSettings {
   showPanel: boolean;
   showIcon: boolean;
   showResources: boolean;
+  newNoteTitle: string;
   listHeader: string;
   listDelimiter: string;
   customCss: string;
@@ -34,12 +35,6 @@ export interface TokenInfo {
   name: string;
   input: string;
   token: string;
-}
-
-export interface TokenRenderers {
-  markdown: boolean;
-  inline: boolean;
-  text: boolean;
 }
 
 export interface JoplinNote {
