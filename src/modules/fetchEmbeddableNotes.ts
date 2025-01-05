@@ -27,17 +27,17 @@ export default async (note: any, fields = ['id', 'title', 'body']): Promise<Map<
   const result = parseTokens(note.body, prefix, suffix);
   const notes = idOnly || !result.length ? [] : await findEmbeddableNotes('', 0, ['id', 'title']);
 
+  console.log(notes);
   await Promise.all(
     result.map(async key => {
       const info = parseToken(key, prefix, suffix);
       const { name, token } = info;
 
-      const item = notes.find(i =>
-        validId(name) ? i.id === name || i.title === name : i.title === name || i.id === name.slice(0, 32)
-      );
+      const item = notes.find(i => i.id === name || i.title === name);
+      const noteId = item?.id || (validId(name.slice(0, 32)) ? name.slice(0, 32) : null);
 
-      if (item) {
-        const note = await fetchNoteById(item.id, fields);
+      if (noteId) {
+        const note = await fetchNoteById(noteId, fields);
         if (note) tokens.set(token, { note, info });
       }
     })
