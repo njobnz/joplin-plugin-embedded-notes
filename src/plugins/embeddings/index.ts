@@ -1,10 +1,11 @@
 import joplin from 'api';
 import { ViewHandle } from 'api/types';
-import { existsSync, readFileSync } from 'fs';
 import { EMBEDDED_LINKS_PANEL_EL, EMBEDDED_LINKS_PANEL_ID } from '../../constants';
 import localization from '../../localization';
 import debounce from '../../utils/debounce';
 import App from '..';
+
+let fs: any = null;
 
 export default class EmbeddingsView {
   app: App = null;
@@ -24,7 +25,7 @@ export default class EmbeddingsView {
   content = async (text: string = ''): Promise<string> => {
     const html = text && text !== '' ? text : this.app.renderer.render(localization.message__reloadPanel);
     const path = await this.setting<string>('customCss');
-    const style = existsSync(path) ? `<style>${readFileSync(path, 'utf-8')}</style>` : '';
+    const style = fs && fs.existsSync(path) ? `<style>${fs.readFileSync(path, 'utf-8')}</style>` : '';
     return `${style}<div id="${EMBEDDED_LINKS_PANEL_EL}">${html}</div>`;
   };
 
@@ -65,6 +66,11 @@ export default class EmbeddingsView {
 
   init = async (): Promise<void> => {
     this.setting = this.app.setting;
+
+    try {
+      fs = await import('fs');
+    } catch (e) {}
+
     await joplin.settings.onChange(this.refresh);
     await joplin.workspace.onNoteChange(this.onNoteChangeHandler);
     await joplin.workspace.onNoteSelectionChange(this.refresh);

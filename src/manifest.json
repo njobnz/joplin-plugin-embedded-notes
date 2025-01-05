@@ -8,6 +8,7 @@
   "author": "Nelson Job",
   "homepage_url": "https://github.com/njobnz/joplin-plugin-embedded-notes#readme",
   "repository_url": "https://github.com/njobnz/joplin-plugin-embedded-notes",
+  "platforms": ["mobile", "desktop"],
   "keywords": ["embed", "placeholder", "token", "variable", "replace", "markdown"],
   "categories": ["productivity", "editor"],
   "screenshots": [],

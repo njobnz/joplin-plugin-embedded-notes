@@ -13,7 +13,7 @@ export default async (): Promise<void> => {
   const note = (await joplin.workspace.selectedNote()) as JoplinNote;
   const text = await setting<string>('disableText');
 
-  if (note && !note.body.includes(text)) {
+  if (note && !note.body.includes(text) && (await joplin.versionInfo()).platform === 'desktop') {
     const notes = await fetchEmbeddableNotes(note);
     const cache = `${LOCAL_STORE_NOTES_KEY}_${note.id}`;
     localStorage.setItem(cache, JSON.stringify(Object.fromEntries(notes)));
