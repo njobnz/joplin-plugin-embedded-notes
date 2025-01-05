@@ -27,7 +27,6 @@ export default async (note: any, fields = ['id', 'title', 'body']): Promise<Map<
   const result = parseTokens(note.body, prefix, suffix);
   const notes = idOnly || !result.length ? [] : await findEmbeddableNotes('', 0, ['id', 'title']);
 
-  console.log(notes);
   await Promise.all(
     result.map(async key => {
       const info = parseToken(key, prefix, suffix);
