@@ -32,11 +32,12 @@ export default async (note: any, fields = ['id', 'title', 'body']): Promise<Map<
       const info = parseToken(key, prefix, suffix);
       const { name, token } = info;
 
-      const item = notes.find(i => i.id === name || i.title === name);
-      const noteId = item?.id || (validId(name) ? name : null);
+      const item = notes.find(i =>
+        validId(name) ? i.id === name || i.title === name : i.title === name || i.id === name.slice(0, 32)
+      );
 
-      if (noteId) {
-        const note = await fetchNoteById(noteId, fields);
+      if (item.id) {
+        const note = await fetchNoteById(item.id, fields);
         if (note) tokens.set(token, { note, info });
       }
     })
