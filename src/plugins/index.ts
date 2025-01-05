@@ -199,7 +199,7 @@ export default class App {
     await joplin.commands.register({
       name: 'createNoteWithEmbeddedContent',
       label: localization.command_createNoteWithEmbeddedContent,
-      iconName: 'fas fa-file-code',
+      iconName: 'fas fa-clone',
       execute: async () => {
         const note = (await joplin.workspace.selectedNote()) as JoplinNote;
         if (!note) return;
@@ -219,6 +219,12 @@ export default class App {
         await joplin.commands.execute('openNote', copy.id);
       },
     });
+
+    await joplin.views.toolbarButtons.create(
+      'createNoteWithEmbeddedContentToolbar',
+      'createNoteWithEmbeddedContent',
+      ToolbarButtonLocation.EditorToolbar
+    );
   };
 
   createBacklinksMenus = async () => {
