@@ -36,7 +36,7 @@ export default async (note: any, fields = ['id', 'title', 'body']): Promise<Map<
         validId(name) ? i.id === name || i.title === name : i.title === name || i.id === name.slice(0, 32)
       );
 
-      if (item.id) {
+      if (item) {
         const note = await fetchNoteById(item.id, fields);
         if (note) tokens.set(token, { note, info });
       }
