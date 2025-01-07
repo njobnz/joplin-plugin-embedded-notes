@@ -1,6 +1,6 @@
 # Embedded Notes for Joplin
 
-[![Latest Release](https://img.shields.io/github/v/release/njobnz/joplin-plugin-embedded-notes?logo=joplin&label=plugin&color=1071D3)](https://github.com/njobnz/joplin-plugin-embedded-notes/releases/latest) [![Build and Test](https://img.shields.io/github/actions/workflow/status/njobnz/joplin-plugin-embedded-notes/test.yml)](https://github.com/njobnz/joplin-plugin-embedded-notes/actions/workflows/test.yml) [![MIT License](https://img.shields.io/github/license/njobnz/joplin-plugin-embedded-notes)](https://opensource.org/licenses/MIT)
+[![Joplin](https://img.shields.io/npm/v/joplin-plugin-embedded-notes?logo=joplin&label=joplin&color=1071D3)](https://joplinapp.org/plugins/plugin/com.tuibyte.EmbeddedNotes/) [![npm](https://img.shields.io/npm/v/joplin-plugin-embedded-notes?logo=npm&label=npm&color=cb3837)](https://www.npmjs.com/package/joplin-plugin-embedded-notes) [![GitHub](https://img.shields.io/github/v/release/njobnz/joplin-plugin-embedded-notes?logo=github&label=github&color=2b3137)](https://github.com/njobnz/joplin-plugin-embedded-notes/releases/latest) [![CI](https://img.shields.io/github/actions/workflow/status/njobnz/joplin-plugin-embedded-notes/test.yml)](https://github.com/njobnz/joplin-plugin-embedded-notes/actions/workflows/test.yml) [![MIT License](https://img.shields.io/github/license/njobnz/joplin-plugin-embedded-notes)](https://opensource.org/licenses/MIT)
 
 A plugin for Joplin that enables referencing content from other notes using placeholder tokens.
 
@@ -124,13 +124,13 @@ To avoid ambiguous token matches, it is recommended to use distinct character se
 | Disable text     |              | Use this text to prevent token replacement in a note. (Default: \<!-- embedded-notes-disable -->)                 |
 
 ## Installation
-<!--
+
 ### Automatic
 
 - Open Joplin and navigate to **Tools > Options > Plugins**.
 - Search for **"Embedded Notes"** and click **Install**.
 - Restart Joplin to enable the plugin.
--->
+
 ### Manual
 
 - Download the latest `.jpl` file from [releases](https://github.com/njobnz/joplin-plugin-embedded-notes/releases/latest).
@@ -155,6 +155,13 @@ This plugin is inspired by and builds upon features from the following projects:
 - [Joplin Note Link System](https://github.com/ylc395/joplin-plugin-note-link-system)
 - [Quick Links Plugin for Joplin](https://github.com/roman-r-m/joplin-plugin-quick-links)
 - [Embed search in note](https://github.com/ambrt/joplin-plugin-embed-search)
+
+## Links
+
+- [Joplin Forum](https://discourse.joplinapp.org/t/plugin-embedded-notes/42874)
+- [Joplin Plugins](https://joplinapp.org/plugins/plugin/com.tuibyte.EasyBacklinks/)
+- [npm Registry](https://www.npmjs.com/package/joplin-plugin-embedded-notes)
+- [GitHub Repository](https://github.com/njobnz/joplin-plugin-embedded-notes/)
 
 ## License
 
