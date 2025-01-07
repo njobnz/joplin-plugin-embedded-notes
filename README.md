@@ -159,7 +159,7 @@ This plugin is inspired by and builds upon features from the following projects:
 ## Links
 
 - [Joplin Forum](https://discourse.joplinapp.org/t/plugin-embedded-notes/42874)
-- [Joplin Plugins](https://joplinapp.org/plugins/plugin/com.tuibyte.EasyBacklinks/)
+- [Joplin Plugins](https://joplinapp.org/plugins/plugin/com.tuibyte.EmbeddedNotes/)
 - [npm Registry](https://www.npmjs.com/package/joplin-plugin-embedded-notes)
 - [GitHub Repository](https://github.com/njobnz/joplin-plugin-embedded-notes/)
 
