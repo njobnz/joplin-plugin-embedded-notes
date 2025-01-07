@@ -1,4 +1,4 @@
-import { MARKDOWNIT_RULERS } from '../../constants';
+import { EMBEDDED_BLOCK_HEADER, EMBEDDED_BLOCK_MARKDOWN, MARKDOWNIT_RULERS } from '../../constants';
 import readEmbeddableNotes from '../../modules/readEmbeddableNotes';
 import replaceTokens from '../../utils/replaceTokens';
 
@@ -14,8 +14,8 @@ export default _context => ({
 
       if (_options.settingValue('fenceOnly') && !isRendering) {
         const embeddings = readEmbeddableNotes(_options.noteId);
-        const isEmbedded = embeddings && token.info.includes('embedded');
-        const isMarkdown = isEmbedded && token.info.includes('markdown');
+        const isEmbedded = embeddings && token.info.includes(EMBEDDED_BLOCK_HEADER);
+        const isMarkdown = isEmbedded && token.info.includes(EMBEDDED_BLOCK_MARKDOWN);
 
         if (isEmbedded) {
           const content = token.content;

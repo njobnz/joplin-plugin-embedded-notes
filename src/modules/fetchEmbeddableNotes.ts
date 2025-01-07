@@ -3,9 +3,9 @@ import findEmbeddableNotes from './findEmbeddableNotes';
 import fetchNoteById from '../utils/fetchNoteById';
 import validId from '../utils/validateJoplinId';
 import setting from '../utils/getSetting';
+import getFenceContent from '../utils/getFenceContent';
 import parseTokens from '../utils/parseTokens';
 import parseToken from '../utils/parseToken';
-
 /**
  * Reads parsed tokens from a note and fetches associated notes by ID or title.
  *
@@ -17,14 +17,16 @@ import parseToken from '../utils/parseToken';
 export default async (note: any, fields = ['id', 'title', 'body']): Promise<Map<string, EmbeddableNote>> => {
   if (!note) return new Map<string, EmbeddableNote>();
 
-  const [prefix, suffix, idOnly] = await Promise.all([
+  const [prefix, suffix, idOnly, fenceOnly] = await Promise.all([
     await setting<string>('prefix'),
     await setting<string>('suffix'),
     await setting<boolean>('idOnly'),
+    await setting<boolean>('fenceOnly'),
   ]);
 
   const tokens = new Map<string, EmbeddableNote>();
-  const result = parseTokens(note.body, prefix, suffix);
+  const content = fenceOnly ? getFenceContent(note.body) : note.body;
+  const result = parseTokens(content, prefix, suffix);
   const notes = idOnly || !result.length ? [] : await findEmbeddableNotes('', 0, ['id', 'title']);
 
   await Promise.all(
