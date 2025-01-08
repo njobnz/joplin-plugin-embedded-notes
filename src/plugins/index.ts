@@ -16,6 +16,7 @@ import {
 import localization from '../localization';
 import escapeMarkdown from '../utils/escapeMarkdown';
 import replaceEscape from '../utils/replaceEscape';
+import validId from '../utils/validateJoplinId';
 import loadEmbeddableNotes from '../modules/loadEmbeddableNotes';
 import findEmbeddableNotes from '../modules/findEmbeddableNotes';
 import fetchEmbeddableNotes from '../modules/fetchEmbeddableNotes';
@@ -51,6 +52,11 @@ export default class App {
   };
 
   onMessageHandler = async (message: any): Promise<any> => {
+    if (typeof message === 'string' && message.startsWith('joplin://')) {
+      const noteId = message.slice(9, 41);
+      if (validId(noteId)) message = { command: OPEN_NOTE_CMD, noteId };
+    }
+
     switch (message?.command) {
       case GET_FILTERED_TOKENS_CMD:
         return this.getFilteredTokens(message?.query);
@@ -116,10 +122,12 @@ export default class App {
     const note = (await joplin.workspace.selectedNote()) as JoplinNote;
     if ((!isPanel && !note) || !note) return result;
 
-    result.head = this.renderer.render(this.generateEmbeddedLinksHead(note, await this.setting<string>('listHeader')));
+    result.head = await this.renderer.render(
+      this.generateEmbeddedLinksHead(note, await this.setting<string>('listHeader'))
+    );
 
     if (note.body.includes(await this.setting<string>('disableText'))) {
-      result.body = this.renderer.render(localization.message__tokensDisabled);
+      result.body = await this.renderer.render(localization.message__tokensDisabled);
       return result;
     }
 
@@ -127,12 +135,16 @@ export default class App {
     result.hide = notes.size === 0;
 
     if (isPanel || !result.hide)
-      result.body = this.renderer.render(
+      result.body = await this.renderer.render(
         this.generateEmbeddedLinksList(
           notes,
           await this.setting<EmbeddedLinksType>('listType'),
           await this.setting<string>('listDelimiter')
-        )
+        ),
+        {
+          postMessageSyntax: isPanel ? 'webviewApi.postMessage' : 'ipcProxySendToHost',
+          plainResourceRendering: !(await this.setting<boolean>('showIcon')),
+        }
       );
 
     return result;

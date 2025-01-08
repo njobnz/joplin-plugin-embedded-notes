@@ -23,7 +23,7 @@ export default class EmbeddingsView {
   };
 
   content = async (text: string = ''): Promise<string> => {
-    const html = text && text !== '' ? text : this.app.renderer.render(localization.message__reloadPanel);
+    const html = text && text !== '' ? text : await this.app.renderer.render(localization.message__reloadPanel);
     const path = await this.setting<string>('customCss');
     const style = fs && fs.existsSync(path) ? `<style>${fs.readFileSync(path, 'utf-8')}</style>` : '';
     return `${style}<div id="${EMBEDDED_LINKS_PANEL_EL}">${html}</div>`;
@@ -33,7 +33,7 @@ export default class EmbeddingsView {
     if (!this.app && this.panel) return;
 
     this.panel = await joplin.views.panels.create(EMBEDDED_LINKS_PANEL_ID);
-    const html = this.app.renderer.render(localization.message__reloadPanel);
+    const html = await this.app.renderer.render(localization.message__reloadPanel);
 
     await joplin.views.panels.setHtml(this.panel, await this.content(html));
     await joplin.views.panels.addScript(this.panel, './plugins/embeddings/assets/panel.css');
