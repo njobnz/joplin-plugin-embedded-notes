@@ -2,7 +2,6 @@ import joplin from 'api';
 import { JoplinNote } from '../types';
 import { LOCAL_STORE_NOTES_KEY } from '../constants';
 import setting from '../utils/getSetting';
-import debounceCache from '../utils/debounceCache';
 import fetchEmbeddableNotes from './fetchEmbeddableNotes';
 import clearEmbeddableNotes from './clearEmbeddableNotes';
 
@@ -17,8 +16,6 @@ export default async (): Promise<void> => {
     const notes = await fetchEmbeddableNotes(note);
     const cache = `${LOCAL_STORE_NOTES_KEY}_${note.id}`;
     localStorage.setItem(cache, JSON.stringify(Object.fromEntries(notes)));
-    clearEmbeddableNotesDelay(note.id);
+    clearEmbeddableNotes(note.id);
   }
 };
-
-const clearEmbeddableNotesDelay = debounceCache(clearEmbeddableNotes, 8000);
