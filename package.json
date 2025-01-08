@@ -1,6 +1,6 @@
 {
   "name": "joplin-plugin-embedded-notes",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A plugin for Joplin that enables referencing content from other notes using placeholder tokens.",
   "scripts": {
     "dist": "webpack --env joplin-plugin-config=buildMain && webpack --env joplin-plugin-config=buildExtraScripts && webpack --env joplin-plugin-config=createArchive",
