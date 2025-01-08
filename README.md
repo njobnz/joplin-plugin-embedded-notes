@@ -144,7 +144,6 @@ To avoid ambiguous token matches, it is recommended to use distinct character se
 - **Rendering Tokens:** Tokens may not update immediately when switching between notes or upon loading the application. Editing the note or quickly switching between notes will trigger the tokens to render.
 - **Token Naming:** Token names cannot contain the character sequence reserved for the opening and closing tags, or have spaces at the beginning or end. Use note ID tokens to reference notes with titles that include reserved characters.
 - **Duplicate Titles:** Only the first note found with a duplicate title is used. To avoid ambiguity, reference notes with duplicate titles using their unique note ID.
-- **Nested Tokens:** Nested token replacement is not supported.
 
 ## Acknowledgments
 

@@ -123,7 +123,7 @@ export default class App {
       return result;
     }
 
-    const notes = await fetchEmbeddableNotes(note, ['id', 'title']);
+    const notes = await fetchEmbeddableNotes(note);
     result.hide = notes.size === 0;
 
     if (isPanel || !result.hide)
@@ -208,7 +208,7 @@ export default class App {
         if (!embeddings) return;
 
         const title = `${note.title}${await this.setting<string>('newNoteTitle')}`;
-        const body = generateEmbeddedNote(note.body, embeddings);
+        const body = generateEmbeddedNote(note, embeddings);
         const copy = await joplin.data.post(['notes'], null, {
           body,
           title,

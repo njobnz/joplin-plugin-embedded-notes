@@ -19,7 +19,7 @@ export default _context => ({
 
         if (isEmbedded) {
           const content = token.content;
-          token.content = replaceTokens(content, embeddings, _options.resourceBaseUrl);
+          token.content = replaceTokens(_options.noteId, content, embeddings, _options.resourceBaseUrl);
 
           let html = '';
           if (isMarkdown) {
@@ -78,6 +78,7 @@ export default _context => ({
       if (_options.settingValue('fenceOnly')) return;
 
       state.src = replaceTokens(
+        _options.noteId,
         state.src,
         readEmbeddableNotes(_options.noteId),
         _options.settingValue('showResources') ? _options.resourceBaseUrl : null
