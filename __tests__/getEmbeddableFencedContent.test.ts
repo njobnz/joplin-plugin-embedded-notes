@@ -1,6 +1,6 @@
-import getFenceContent from '../src/utils/getFenceContent';
+import getEmbeddableFencedContent from '../src/modules/getEmbeddableFencedContent';
 
-describe('Extract content from all valid markdown fence code blocks with embedded in the header', () => {
+describe('Extract content from all valid markdown fenced code blocks with embedded in the header', () => {
   it('should return content within all valid fenced code blocks', () => {
     const markdown = `
 Outside fenced code blocks
@@ -39,6 +39,7 @@ Block without closing tag
 
 %^ValidToken4^%
 `;
+
     const expected = `
 Inside fenced code block
 
@@ -56,6 +57,7 @@ Block without closing tag
 
 %^ValidToken4^%
 `;
-    expect(getFenceContent(markdown)).toBe(expected);
+
+    expect(getEmbeddableFencedContent(markdown)).toBe(expected);
   });
 });

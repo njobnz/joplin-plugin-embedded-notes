@@ -1,9 +1,9 @@
 import { EmbeddableNote } from '../types';
 import findEmbeddableNotes from './findEmbeddableNotes';
+import getEmbeddableFencedContent from './getEmbeddableFencedContent';
 import fetchNoteById from '../utils/fetchNoteById';
 import validId from '../utils/validateJoplinId';
 import setting from '../utils/getSetting';
-import getFenceContent from '../utils/getFenceContent';
 import parseTokens from '../utils/parseTokens';
 import parseToken from '../utils/parseToken';
 /**
@@ -25,7 +25,7 @@ export default async (note: any, fields = ['id', 'title', 'body']): Promise<Map<
   ]);
 
   const tokens = new Map<string, EmbeddableNote>();
-  const content = fenceOnly ? getFenceContent(note.body) : note.body;
+  const content = fenceOnly ? getEmbeddableFencedContent(note.body) : note.body;
   const result = parseTokens(content, prefix, suffix);
   const notes = idOnly || !result.length ? [] : await findEmbeddableNotes('', 0, ['id', 'title']);
 

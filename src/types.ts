@@ -24,6 +24,11 @@ export interface EmbeddableNote {
   info: TokenInfo;
 }
 
+export interface EmbeddableBlocks {
+  type: string;
+  content: string;
+}
+
 export interface EmbeddedLinksContent {
   position: EmbeddedLinksPosition;
   hide: boolean;
