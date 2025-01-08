@@ -96,7 +96,7 @@ export default class App {
     const note = await joplin.workspace.selectedNote();
     if (!note || note.body.includes(await this.setting<string>('disableText'))) return [];
 
-    const tokens = await findEmbeddableNotes(query?.prefix, 10);
+    const tokens = await findEmbeddableNotes(query?.prefix, ['id', 'title'], 10);
     const filter = tokens.filter(item => item.id !== note.id);
     filter.sort((a, b) => a.title.localeCompare(b.title));
     return filter;
