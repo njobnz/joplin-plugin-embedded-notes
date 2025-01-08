@@ -34,10 +34,18 @@ Nested fenced code block
 %^InvalidToken2^%
 \`\`\`
 
+\`\`\`embedded\`
+%^InvalidToken3^%
+    \`\`\`embedded
+%^InvalidToken4^%
+   \`\`\`embedded
+%^ValidToken4^%
+ \`\`\`
+
  \`\`\`embedded
 Block without closing tag
 
-%^ValidToken4^%
+%^ValidToken5^%
 `;
 
     const expected = `
@@ -53,9 +61,11 @@ Nested fenced code block
 %^ValidToken3^%
 \`\`\`
 
+%^ValidToken4^%
+
 Block without closing tag
 
-%^ValidToken4^%
+%^ValidToken5^%
 `;
 
     expect(getEmbeddableFencedContent(markdown)).toBe(expected);
