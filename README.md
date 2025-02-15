@@ -87,6 +87,10 @@ Or press:
 
 - **CTRL+ALT+E**
 
+On mobile:
+
+- **Open note in editor > Select "..." from toolbar > Press the <img src="https://raw.githubusercontent.com/njobnz/joplin-plugin-embedded-notes/refs/heads/main/docs/clone-solid.svg" height="20" width="20"> icon**
+
 The new note will open automatically in the editor.
 
 ### Autocomplete
@@ -140,7 +144,7 @@ To avoid ambiguous token matches, it is recommended to use distinct character se
 
 ## Known issues and limitations
 
-- **Mobile Support:** Limited to [creating new notes with embedded content](#generate-note) and does not support dynamic token replacement.
+- **Mobile Support:** Limited to [creating new notes with embedded content](#generate-note) and does not support immediate token replacement.
 - **Rendering Tokens:** Tokens may not update immediately when switching between notes or upon loading the application. Editing the note or quickly switching between notes will trigger the tokens to render.
 - **Token Naming:** Token names cannot contain the character sequence reserved for the opening and closing tags, or have spaces at the beginning or end. Use note ID tokens to reference notes with titles that include reserved characters.
 - **Duplicate Titles:** Only the first note found with a duplicate title is used. To avoid ambiguity, reference notes with duplicate titles using their unique note ID.
