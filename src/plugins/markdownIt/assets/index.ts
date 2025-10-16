@@ -167,8 +167,10 @@ export class EmbeddedNotes {
   }
 
   init(): void {
-    this.noteUpdateHandler();
-    document.addEventListener('joplin-noteDidUpdate', () => this.noteUpdateHandler());
+    setTimeout(() => {
+      this.noteUpdateHandler();
+      document.addEventListener('joplin-noteDidUpdate', () => this.noteUpdateHandler());
+    }, 300);
   }
 }
 
