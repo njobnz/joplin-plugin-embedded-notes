@@ -13,14 +13,15 @@ import App from '.';
  * @returns {Promise<void>} A promise.
  */
 export default class AppSettings {
-  app: App = null;
+  app: App;
 
   constructor(app: App) {
     if (!app) throw Error('app cannot be null');
     this.app = app;
+    this.specification = {} as Record<keyof PluginSettings, SettingItem>;
   }
 
-  specification: Record<keyof PluginSettings, SettingItem> = null;
+  specification: Record<keyof PluginSettings, SettingItem> = {} as Record<keyof PluginSettings, SettingItem>;
 
   /**
    * Get a setting from Joplin API.

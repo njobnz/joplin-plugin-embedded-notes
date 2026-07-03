@@ -8,9 +8,9 @@ import App from '..';
 let fs: any = null;
 
 export default class EmbeddingsView {
-  app: App = null;
-  panel: ViewHandle = null;
-  setting: <T>(name: string) => Promise<T> = null;
+  app: App;
+  panel!: ViewHandle;
+  setting!: <T>(name: string) => Promise<T>;
 
   constructor(app: App) {
     if (!app) throw Error('app cannot be null');

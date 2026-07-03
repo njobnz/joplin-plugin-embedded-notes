@@ -11,7 +11,7 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
   const { autocompletion, insertCompletionText } =
     require('@codemirror/autocomplete') as typeof CodeMirrorAutocompleteType;
 
-  const completeToken = async (context: CompletionContext): Promise<CompletionResult> => {
+  const completeToken = async (context: CompletionContext): Promise<CompletionResult | null> => {
     const { prefix, suffix, idOnly, autocomplete }: PluginSettings = await _context.postMessage({
       command: GET_SETTINGS_CMD,
       values: ['prefix', 'suffix', 'idOnly', 'autocomplete'],
@@ -24,14 +24,14 @@ export default async (CodeMirror: any, _context: ContentScriptContext) => {
 
     if (!match || (match.from === match.to && !context.explicit)) return null;
 
-    const tokens: JoplinNote[] = await _context.postMessage({
+    const tokens: JoplinNote[] | null = await _context.postMessage({
       command: GET_FILTERED_TOKENS_CMD,
       query: {
         prefix: match.text.substring(prefix.length).trimEnd(),
       },
     });
 
-    if (!tokens && !tokens.length) return null;
+    if (!tokens || !tokens.length) return null;
 
     const createApplyCompletionFn = (noteTitle: string, noteId: string) => {
       return (view: EditorView, _completion: Completion, from: number, to: number) => {

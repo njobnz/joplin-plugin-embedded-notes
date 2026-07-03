@@ -19,7 +19,7 @@ import parseToken from '../utils/parseToken';
  */
 export default async function fetchEmbeddableNotes(
   note: any,
-  fields = ['id', 'title', 'body'],
+  fields: string[] = ['id', 'title', 'body'],
   tokens: Map<string, EmbeddableNote> = new Map<string, EmbeddableNote>()
 ): Promise<Map<string, EmbeddableNote>> {
   if (!note) return new Map<string, EmbeddableNote>();

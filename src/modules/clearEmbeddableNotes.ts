@@ -6,7 +6,7 @@ const pattern = new RegExp(`^${LOCAL_STORE_NOTES_KEY}_[0-9A-Fa-f]{32}$`);
 export default (id: string): void => {
   try {
     for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
+      const key = String(localStorage.key(i));
       if (key === `${LOCAL_STORE_NOTES_KEY}_${id}`) {
         removeNoteCache.cancel(key);
       } else {

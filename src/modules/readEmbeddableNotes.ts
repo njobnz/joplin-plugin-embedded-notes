@@ -8,7 +8,7 @@ import { LOCAL_STORE_NOTES_KEY } from '../constants';
  */
 export default (id: string): Record<string, EmbeddableNote> => {
   try {
-    return JSON.parse(localStorage.getItem(`${LOCAL_STORE_NOTES_KEY}_${id}`));
+    return JSON.parse(String(localStorage.getItem(`${LOCAL_STORE_NOTES_KEY}_${id}`)));
   } catch (e) {
     return {};
   }

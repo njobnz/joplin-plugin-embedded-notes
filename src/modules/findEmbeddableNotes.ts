@@ -20,6 +20,6 @@ export default async (filter: string = '', fields?: string[], limit: number = 0)
   if (search) parts.push(search);
   if (filter) parts.push(`title:"${filter}*"`);
 
-  const query = parts.length > 0 ? (filter ? '/' : '') + parts.join(' ') : null;
+  const query = parts.length > 0 ? (filter ? '/' : '') + parts.join(' ') : '';
   return await fetchNotes(query ? ['search'] : ['notes'], query, fields, limit);
 };

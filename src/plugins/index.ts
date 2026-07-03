@@ -153,7 +153,7 @@ export default class App {
   generateEmbeddedLinksHead = (note: any, header: string): string => {
     if (!header || /^#{1,6}(?=\s)/.test(header)) return header;
     const headers = note.body.match(/^#{1,6}(?=\s)/gm) || [];
-    const largest = headers.length ? '#'.repeat(Math.min(...headers.map(h => h.length))) : '#';
+    const largest = headers.length ? '#'.repeat(Math.min(...headers.map((h: string | any[]) => h.length))) : '#';
     return `${largest} ${header}`;
   };
 

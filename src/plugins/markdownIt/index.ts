@@ -4,7 +4,7 @@ import { MARKDOWNIT_SCRIPT_ID } from '../../constants';
 import App from '..';
 
 export default class MarkdownView {
-  app: App = null;
+  app: App;
 
   constructor(app: App) {
     if (!app) throw Error('app cannot be null');

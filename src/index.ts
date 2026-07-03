@@ -1,7 +1,7 @@
 import joplin from 'api';
 import App from './plugins';
 
-let embeddedNotesApp: App = null;
+let embeddedNotesApp;
 
 joplin.plugins.register({
   onStart: async () => {
