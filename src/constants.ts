@@ -38,7 +38,7 @@ export enum EmbeddedLinksType {
 }
 
 export enum MarkupLanguage {
-	Markdown = 1,
-	Html = 2,
-	Any = 3,
+  Markdown = 1,
+  Html = 2,
+  Any = 3,
 }
