@@ -25,16 +25,17 @@ export interface EmbeddableNote {
   depth: number;
 }
 
-export interface EmbeddableBlocks {
-  type: string;
-  content: string;
-}
-
 export interface EmbeddedLinksContent {
   position: EmbeddedLinksPosition;
   hide: boolean;
   head: string;
   body: string;
+}
+
+export interface ContentSegment {
+  type: string;
+  text: string;
+  fenced: boolean;
 }
 
 export interface TokenInfo {

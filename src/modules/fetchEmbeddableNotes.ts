@@ -1,6 +1,7 @@
 import { EmbeddableNote, JoplinNote } from '../types';
 import findEmbeddableNotes from './findEmbeddableNotes';
-import getEmbeddableFencedContent from './getEmbeddableFencedContent';
+import getEmbeddableContent from './getEmbeddableContent';
+import getEmbeddableContentFenced from './getEmbeddableContentFenced';
 import setting from '../utils/getSetting';
 import validId from '../utils/validateJoplinId';
 import fetchNoteById from '../utils/fetchNoteById';
@@ -40,7 +41,7 @@ export default async function fetchEmbeddableNotes(
   ): Promise<Map<string, EmbeddableNote>> {
     if (!n || depth > limit) return t;
 
-    const content = fenceOnly ? getEmbeddableFencedContent(n.body) : n.body;
+    const content = fenceOnly ? getEmbeddableContentFenced(n.body) : getEmbeddableContent(n.body);
     const result = parseTokens(content, prefix, suffix);
 
     if (cache.length === 0) {

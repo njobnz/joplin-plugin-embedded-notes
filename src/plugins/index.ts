@@ -98,19 +98,24 @@ export default class App {
     }
   };
 
-  getEmbeddedContent = async (): Promise<Map<string, string>> => {
+  getEmbeddedContent = async (): Promise<Map<string, Object>> => {
     const note = await joplin.workspace.selectedNote();
     const notes = await fetchEmbeddableNotes(note);
     const embeds = Object.fromEntries(notes);
-    const tokens = new Map<string, string>();
+    const tokens = new Map<string, Object>();
 
     for (const [_, embed] of notes) {
       if (embed.depth > 0) continue;
-      const body = await this.renderer.render(replaceTokens(note.id, embed.note.body, embeds), {
+      const text = replaceTokens(note.id, embed.note.body, embeds);
+      const html = await this.renderer.render(text, {
         postMessageSyntax: 'ipcProxySendToHost',
         mapsToLine: false,
       });
-      tokens.set(embed.info.name, replaceTokens(note.id, body, embeds));
+      tokens.set(embed.info.name, {
+        info: embed.info,
+        text: text,
+        html: html,
+      });
     }
 
     return tokens;

@@ -1,4 +1,4 @@
-import getEmbeddableFencedContent from '../src/modules/getEmbeddableFencedContent';
+import getEmbeddableFencedContent from '../src/modules/getEmbeddableContentFenced';
 
 describe('Extract content from all valid markdown fenced code blocks with embedded in the header', () => {
   it('should return content within all valid fenced code blocks', () => {

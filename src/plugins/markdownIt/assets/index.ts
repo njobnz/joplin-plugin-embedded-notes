@@ -1,7 +1,8 @@
 import { EmbeddedLinksContent } from '../../../types';
 import {
   EmbeddedLinksPosition,
-  EMBEDDED_NOTE_TOKEN_EL,
+  EMBEDDED_NOTES_FENCE_EL,
+  EMBEDDED_NOTES_TOKEN_EL,
   GET_DATA_CMD,
   GET_EMBEDDED_LINKS_CMD,
   GET_EMBEDDED_CONTENT_CMD,
@@ -9,6 +10,7 @@ import {
   GET_SETTING_CMD,
   MARKDOWNIT_SCRIPT_ID,
 } from '../../../constants';
+import escapeRegExp from '../../../utils/escapeRegExp';
 
 declare const webviewApi: any;
 
@@ -65,13 +67,35 @@ export class EmbeddedNotes {
     const embeds = await this.fetchEmbeddedContent();
     if (!embeds) return;
 
-    for (const [token, html] of Object.entries(embeds)) {
-      const placeholders = Array.from(content.querySelectorAll('.' + EMBEDDED_NOTE_TOKEN_EL)).filter(
-        el => el.getAttribute('data-token') === token
+    const fences = Array.from(content.querySelectorAll(`.${EMBEDDED_NOTES_FENCE_EL}`));
+    for (const fence of fences) {
+      const pre = fence.querySelector('.joplin-source');
+      if (!pre) return;
+
+      const body = Array.from(pre.childNodes)
+        .filter(n => n.nodeType === Node.TEXT_NODE)
+        .map(n => n.textContent)
+        .join('');
+
+      let text: string = body;
+      for (const [_, embed] of Object.entries(embeds)) {
+        text = text.replace(new RegExp(escapeRegExp(embed.info.token), 'g'), embed.text);
+      }
+
+      while (pre.nextSibling) {
+        pre.nextSibling.remove();
+      }
+
+      pre.insertAdjacentHTML('afterend', '<pre class="hljs"><code>' + text + '</code></pre>');
+    }
+
+    for (const [name, embed] of Object.entries(embeds)) {
+      const placeholders = Array.from(content.querySelectorAll(`.${EMBEDDED_NOTES_TOKEN_EL}`)).filter(
+        el => el.getAttribute('data-token') === name
       );
       if (!placeholders.length) continue;
       for (const placeholder of placeholders) {
-        placeholder.outerHTML = html;
+        placeholder.outerHTML = embed.html;
       }
     }
   }

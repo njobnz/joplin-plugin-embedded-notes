@@ -1,8 +1,8 @@
 import { EMBEDDED_BLOCK_HEADER } from '../constants';
-import parseFencedBlocks from './parseEmbeddableFencedBlocks';
+import parseContent from '../utils/parseContent';
 
 export default (text: string): string =>
-  parseFencedBlocks(text)
+  parseContent(text)
     .filter(item => item.type === EMBEDDED_BLOCK_HEADER)
-    .map(item => item.content)
+    .map(item => item.text)
     .join('');
