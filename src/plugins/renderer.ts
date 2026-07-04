@@ -15,10 +15,10 @@ export default class Renderer {
     };
   }
 
-  // https://github.com/laurent22/joplin/blob/e1e2ba8888ea290a76cdb573f50b9f7a0f25da58/packages/lib/commands/renderMarkup.ts#L23
-  // https://github.com/laurent22/joplin/blob/e1e2ba8888ea290a76cdb573f50b9f7a0f25da58/packages/renderer/types.ts#L20
-  // https://github.com/laurent22/joplin/blob/e1e2ba8888ea290a76cdb573f50b9f7a0f25da58/packages/renderer/MdToHtml.ts#L466
-  render = async (text: string, options: any = {}) => {
+  // https://github.com/laurent22/joplin/blob/f7f7ba10e2a55bd8a7c9cd09dc439650a07d84e3/packages/lib/commands/renderMarkup.ts#L29
+  // https://github.com/laurent22/joplin/blob/f7f7ba10e2a55bd8a7c9cd09dc439650a07d84e3/packages/renderer/types.ts#L96
+  // https://github.com/laurent22/joplin/blob/f7f7ba10e2a55bd8a7c9cd09dc439650a07d84e3/packages/renderer/MdToHtml.ts#L456
+  render = async (text: string, options: any = {}): Promise<string> => {
     return (
       await joplin.commands.execute('renderMarkup', MarkupLanguage.Markdown, text, null, {
         ...this.options,

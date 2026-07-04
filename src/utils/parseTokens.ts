@@ -8,8 +8,7 @@
  * @returns {string[]} An array of unique token names.
  */
 export default (text: string, prefix: string, suffix: string): string[] => {
-  if (!(prefix = prefix.trim()) || !(suffix = suffix.trim()))
-    throw new Error('Token prefix or suffix cannot be empty.');
+  if (!prefix || !suffix || !(prefix = prefix.trim()) || !(suffix = suffix.trim())) return [];
 
   const tokens = new Set<string>();
   let currentIdx = 0;

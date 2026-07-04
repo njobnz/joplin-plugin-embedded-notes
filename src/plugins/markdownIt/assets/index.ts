@@ -1,13 +1,14 @@
 import { EmbeddedLinksContent } from '../../../types';
 import {
   EmbeddedLinksPosition,
+  EMBEDDED_NOTE_TOKEN_EL,
   GET_DATA_CMD,
   GET_EMBEDDED_LINKS_CMD,
+  GET_EMBEDDED_CONTENT_CMD,
   GET_GLOBAL_VALUE_CMD,
   GET_SETTING_CMD,
   MARKDOWNIT_SCRIPT_ID,
 } from '../../../constants';
-import { getClassNameForMimeType } from 'font-awesome-filetypes';
 
 declare const webviewApi: any;
 
@@ -16,7 +17,7 @@ export class EmbeddedNotes {
   readonly headerId = 'embedded-notes-header';
 
   findHeaderByName(name: string, el: Element): Element | null {
-    if (!el || !name?.trim()) return null;
+    if (!el || !name || !name.trim()) return null;
     return (
       Array.from(el.children).find(child => child.tagName.startsWith('H') && child.textContent?.trim() === name) || null
     );
@@ -44,14 +45,51 @@ export class EmbeddedNotes {
     });
   }
 
-  async fetchEmbeddings(isFound: boolean): Promise<EmbeddedLinksContent> {
+  async fetchEmbeddedContent(): Promise<Object> {
+    return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
+      command: GET_EMBEDDED_CONTENT_CMD,
+    });
+  }
+
+  async fetchEmbeddedLinks(isFound: boolean): Promise<EmbeddedLinksContent> {
     return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
       command: GET_EMBEDDED_LINKS_CMD,
       isFound,
     });
   }
 
-  insertEmbeddings(content: Element, heading: Element | null, backlinks: EmbeddedLinksContent): void {
+  async writeEmbeddedContent(): Promise<void> {
+    const content = document.getElementById(this.contentId);
+    if (!content) return;
+
+    const embeds = await this.fetchEmbeddedContent();
+    if (!embeds) return;
+
+    for (const [token, html] of Object.entries(embeds)) {
+      const placeholders = Array.from(content.querySelectorAll('.' + EMBEDDED_NOTE_TOKEN_EL)).filter(
+        el => el.getAttribute('data-token') === token
+      );
+      if (!placeholders.length) continue;
+      for (const placeholder of placeholders) {
+        placeholder.outerHTML = html;
+      }
+    }
+  }
+
+  async writeEmbeddedLinks(): Promise<void> {
+    const content = document.getElementById(this.contentId);
+    if (!content) return;
+
+    const name = (await this.fetchSetting<string>('listHeader')).replace(/^#{1,6}\s+/gm, '');
+    const header = document.getElementById(this.headerId) ?? this.findHeaderByName(name, content);
+
+    const embeddings = await this.fetchEmbeddedLinks(Boolean(header));
+    if (embeddings.hide) return;
+
+    this.insertEmbeddedLinks(content, header, embeddings);
+  }
+
+  insertEmbeddedLinks(content: Element, heading: Element | null, backlinks: EmbeddedLinksContent): void {
     const { head = '', body = '', position = EmbeddedLinksPosition.None } = backlinks;
 
     if (heading) {
@@ -65,108 +103,12 @@ export class EmbeddedNotes {
     content.insertAdjacentHTML(insert, head + body);
   }
 
-  async writeEmbeddigs(): Promise<void> {
-    const content = document.getElementById(this.contentId);
-    if (!content) return;
-
-    const name = (await this.fetchSetting<string>('listHeader')).replace(/^#{1,6}\s+/gm, '');
-    const header = document.getElementById(this.headerId) ?? this.findHeaderByName(name, content);
-
-    const embeddings = await this.fetchEmbeddings(Boolean(header));
-    if (embeddings.hide) return;
-
-    this.insertEmbeddings(content, header, embeddings);
-  }
-
-  /*
-   * Parses URLs set in `replaceResourceUrls` and builds resource elements.
-   * See `replaceResourceUrls` in `replaceTokens.ts` for more information.
-   */
-  async updateResources(): Promise<void> {
-    if (!(await this.fetchSetting<string>('showResources'))) return;
-
-    const elements = document.querySelectorAll('a[href], img[src]') as any;
-    const pattern = /^(joplin-content:\/\/note-viewer\/.*\/\/([0-9A-Fa-f]{32}))(|#[^\s]*)$/;
-
-    for (const element of elements) {
-      const match = (element.src || element.href).match(pattern);
-      if (!match) continue;
-
-      const [, url, id, hash] = match;
-
-      const resource = (await this.fetchData(['resources', id], {
-        fields: ['title', 'mime', 'file_extension'],
-      })) as any;
-
-      const href = resource?.file_extension ? `${url}.${resource.file_extension}` : url;
-
-      // Update internal embedded image src attributes
-      if (element.tagName === 'IMG') {
-        element.src = `${href}?t=${Date.now()}`;
-        continue;
-      }
-
-      if (element.tagName !== 'A') continue;
-
-      // Update internal embedded note and resource anchor tags
-      if (resource && element?.title !== undefined && pattern.test(element.title))
-        element.setAttribute('title', resource.title);
-      element.setAttribute('data-resource-id', id);
-      element.setAttribute('href', resource ? href : '#');
-      element.setAttribute(
-        'onclick',
-        `ipcProxySendToHost("joplin://${id}${hash}", { resourceId: "${id}" }); return false;`
-      );
-
-      // Build resource icon
-      const mime = resource?.mime;
-      const icon = mime ? getClassNameForMimeType(mime) : 'fa-joplin';
-      const iconEl = document.createElement('span');
-      iconEl.className = `resource-icon ${icon}`;
-      element.prepend(iconEl);
-
-      if (!resource) continue;
-
-      // Create internal embedded resource containers for video, audio and pdfs
-      const type = mime.split('/')[1] === 'pdf' ? 'pdf' : mime.split('/')[0];
-      if (!['audio', 'video', 'pdf'].includes(type)) continue;
-
-      const isPdf = type === 'pdf';
-
-      // Test if the markdown plugin for the resource type is enabled
-      const isEnabled = await this.fetchGlobal<boolean>(`markdown.plugin.${isPdf ? 'pdfViewer' : `${type}Player`}`);
-
-      // Test if the container for the resource type already exists
-      const resourceEl = element.nextElementSibling;
-      if (!isEnabled || resourceEl?.tagName === type.toUpperCase()) continue;
-
-      // Create the container for the resource type
-      const mediaEl = document.createElement(isPdf ? 'object' : type);
-      mediaEl.className = `media-player media-${type}`;
-
-      if (isPdf) {
-        mediaEl.data = href;
-        mediaEl.type = mime;
-      } else {
-        const sourceEl = document.createElement('source');
-        sourceEl.src = href;
-        sourceEl.type = mime;
-
-        mediaEl.controls = true;
-        mediaEl.appendChild(sourceEl);
-      }
-
-      element.setAttribute('type', mime);
-      element.after(mediaEl);
-    }
-  }
-
   async noteUpdateHandler(): Promise<void> {
-    await this.writeEmbeddigs();
-    await this.updateResources();
+    await this.writeEmbeddedContent();
+    await this.writeEmbeddedLinks();
   }
 
-  init(): void {
+  async init(): Promise<void> {
     setTimeout(() => {
       this.noteUpdateHandler();
       document.addEventListener('joplin-noteDidUpdate', () => this.noteUpdateHandler());

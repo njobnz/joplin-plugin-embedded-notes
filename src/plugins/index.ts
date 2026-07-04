@@ -6,6 +6,7 @@ import {
   EmbeddedLinksType,
   GET_FILTERED_TOKENS_CMD,
   GET_EMBEDDED_LINKS_CMD,
+  GET_EMBEDDED_CONTENT_CMD,
   GET_SETTINGS_CMD,
   GET_SETTING_CMD,
   SET_SETTING_CMD,
@@ -16,8 +17,8 @@ import {
 import localization from '../localization';
 import escapeMarkdown from '../utils/escapeMarkdown';
 import replaceEscape from '../utils/replaceEscape';
+import replaceTokens from '../utils/replaceTokens';
 import validId from '../utils/validateJoplinId';
-import loadEmbeddableNotes from '../modules/loadEmbeddableNotes';
 import findEmbeddableNotes from '../modules/findEmbeddableNotes';
 import fetchEmbeddableNotes from '../modules/fetchEmbeddableNotes';
 import generateEmbeddedNote from '../modules/generateEmbeddedNote';
@@ -62,8 +63,12 @@ export default class App {
         return this.getFilteredTokens(message?.query);
       case GET_EMBEDDED_LINKS_CMD:
         return await this.getEmbeddedLinks(!!message?.isFound);
+      case GET_EMBEDDED_CONTENT_CMD:
+        const content = await this.getEmbeddedContent();
+        return Object.fromEntries(content);
       case GET_GLOBAL_VALUE_CMD:
-        return await joplin.settings.globalValue(message?.name);
+        const name = message?.name;
+        return name ? (await joplin.settings.globalValues([name]))[name] : null;
       case GET_SETTINGS_CMD:
         const values = message?.values;
         if (!Array.isArray(values)) return {};
@@ -93,9 +98,22 @@ export default class App {
     }
   };
 
-  onNoteChangeHandler = (e: any): void => {
-    if (e.event !== 2) return;
-    loadEmbeddableNotes();
+  getEmbeddedContent = async (): Promise<Map<string, string>> => {
+    const note = await joplin.workspace.selectedNote();
+    const notes = await fetchEmbeddableNotes(note);
+    const embeds = Object.fromEntries(notes);
+    const tokens = new Map<string, string>();
+
+    for (const [_, embed] of notes) {
+      if (embed.depth > 0) continue;
+      const body = await this.renderer.render(replaceTokens(note.id, embed.note.body, embeds), {
+        postMessageSyntax: 'ipcProxySendToHost',
+        mapsToLine: false,
+      });
+      tokens.set(embed.info.name, replaceTokens(note.id, body, embeds));
+    }
+
+    return tokens;
   };
 
   getFilteredTokens = async (query: any): Promise<JoplinNote[]> => {
@@ -143,7 +161,8 @@ export default class App {
         ),
         {
           postMessageSyntax: isPanel ? 'webviewApi.postMessage' : 'ipcProxySendToHost',
-          plainResourceRendering: !(await this.setting<boolean>('showIcon')),
+          showNoteLinkIcon: await this.setting<boolean>('showIcon'),
+          mapsToLine: false,
         }
       );
 
@@ -257,9 +276,5 @@ export default class App {
     await this.registerToggleEmbeddingsPanelCmd();
     await this.registerCreateNoteWithEmbeddedContentCmd();
     await this.createBacklinksMenus();
-
-    await joplin.workspace.onNoteChange(this.onNoteChangeHandler);
-    await joplin.workspace.onNoteSelectionChange(loadEmbeddableNotes);
-    loadEmbeddableNotes();
   };
 }

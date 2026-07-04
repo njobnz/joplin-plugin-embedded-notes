@@ -2,7 +2,6 @@
 	"extraScripts": [
 		"plugins/markdownIt/plugin.ts",
 		"plugins/codeMirror/plugin.ts",
-		"plugins/embeddings/assets/panel.ts",
 		"plugins/markdownIt/assets/index.ts"
 	]
 }

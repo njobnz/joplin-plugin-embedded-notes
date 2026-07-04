@@ -22,6 +22,7 @@ export interface PluginSettings {
 export interface EmbeddableNote {
   note: JoplinNote;
   info: TokenInfo;
+  depth: number;
 }
 
 export interface EmbeddableBlocks {

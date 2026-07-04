@@ -37,7 +37,6 @@ export default class EmbeddingsView {
 
     await joplin.views.panels.setHtml(this.panel, await this.content(html));
     await joplin.views.panels.addScript(this.panel, './plugins/embeddings/assets/panel.css');
-    await joplin.views.panels.addScript(this.panel, './plugins/embeddings/assets/panel.js');
     await joplin.views.panels.onMessage(this.panel, this.app.onMessageHandler);
     await joplin.views.panels.show(this.panel);
   };

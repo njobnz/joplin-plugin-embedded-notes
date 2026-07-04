@@ -10,8 +10,10 @@ export const EMBEDDED_BLOCK_MARKDOWN: string = 'markdown';
 
 export const EMBEDDED_LINKS_PANEL_EL: string = 'embedded-notes-panel';
 export const EMBEDDED_LINKS_PANEL_ID: string = 'embedded_notes_panel';
+export const EMBEDDED_NOTE_TOKEN_EL: string = 'embedded-notes-token';
 
 export const GET_FILTERED_TOKENS_CMD: string = 'getFilteredTokens';
+export const GET_EMBEDDED_CONTENT_CMD: string = 'getEmbeddedContent';
 export const GET_EMBEDDED_LINKS_CMD: string = 'getEmbeddedLinks';
 export const GET_GLOBAL_VALUE_CMD: string = 'getGlobalValue';
 export const GET_SETTINGS_CMD: string = 'getSettings';
