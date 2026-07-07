@@ -7,8 +7,12 @@ export default (_context: any) => ({
       self.renderToken(tokens, idx, options, env, self);
     const renderFence = md.renderer.rules.fence || renderProxy;
 
+    let disabled: boolean = false;
+
     md.core.ruler.before('normalize', 'embedded_notes', (state: any) => {
-      if (_options.settingValue('fenceOnly')) return;
+      const text = _options.settingValue('disableText');
+      if (text) disabled = state.src.includes(text);
+      if (disabled || _options.settingValue('fenceOnly')) return;
       state.src = renderPlaceholders(state.src);
     });
 
@@ -16,7 +20,7 @@ export default (_context: any) => ({
       const token = tokens[idx];
       const html = renderFence(tokens, idx, options, env, self);
 
-      if (!token.info.includes(EMBEDDED_BLOCK_HEADER)) {
+      if (disabled || !token.info.includes(EMBEDDED_BLOCK_HEADER)) {
         return html;
       }
 
