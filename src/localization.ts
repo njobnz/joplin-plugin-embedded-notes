@@ -34,6 +34,9 @@ interface AppLocalization {
   setting__customCss: string;
   setting__customCss__description: string;
 
+  setting__recursionDepth: string;
+  setting__recursionDepth__description: string;
+
   setting__disableText: string;
   setting__disableText__description: string;
 
@@ -75,15 +78,18 @@ const defaultStrings: AppLocalization = {
 
   setting__newNoteTitle: 'Embedded title',
   setting__newNoteTitle__description:
-    'Text to appened to note titles when creating a new note with embedded content. (Default:  - Embed)',
+    'Text to appened to note titles when creating a new note with embedded content. (default:  - Embed)',
 
   setting__listHeader: 'List header',
   setting__listHeader__description: 'Header text for the embedded links section. (default: Embeddings)',
   setting__listDelimiter: 'List delimiter',
   setting__listDelimiter__description:
-    'Defines a custom delimiter to separate embedded links when the "New Line" list style is selected. (Default: \\n)',
+    'Defines a custom delimiter to separate embedded links when the "New Line" list style is selected. (default: \\n)',
   setting__customCss: 'Panel stylesheet',
   setting__customCss__description: 'Path to custom CSS for styling the embedded links panel.',
+
+  setting__recursionDepth: 'Recursion depth',
+  setting__recursionDepth__description: 'Maximum depth to search for nested tokens within embedded notes. (default: 3)',
 
   setting__disableText: 'Disable text',
   setting__disableText__description:

@@ -182,6 +182,17 @@ export default class AppSettings {
         advanced: true,
       },
 
+      recursionDepth: {
+        public: true,
+        section: SETTINGS_SECTION_NAME,
+        storage: SettingStorage.File,
+        label: localization.setting__recursionDepth,
+        description: localization.setting__recursionDepth__description,
+        type: SettingItemType.Int,
+        value: 3,
+        advanced: true,
+      },
+
       customCss: {
         public: true,
         section: SETTINGS_SECTION_NAME,

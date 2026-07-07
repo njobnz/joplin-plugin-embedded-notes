@@ -14,6 +14,7 @@ export interface PluginSettings {
   newNoteTitle: string;
   listHeader: string;
   listDelimiter: string;
+  recursionDepth: number;
   customCss: string;
   disableText: string;
 }

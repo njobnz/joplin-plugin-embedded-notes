@@ -14,16 +14,16 @@ import parseToken from '../utils/parseToken';
  * Returns a map of tokens with their associated note data.
  *
  * @param {any} note - A note containing tokens to fetch.
+ * @param {number} limit - Maximum depth of recursion (0 for infinite).
  * @param {string[]} fields - Fields to fetch for each note.
  * @param {Map<string, EmbeddableNote>} tokens - A map to store fetched tokens and associated notes.
- * @param {number} limit - Maximum depth of recursion to prevent infinite loops.
  * @returns {Promise<Map<string, EmbeddableNote>>} A map of tokens to their associated note data.
  */
 export default async function fetchEmbeddableNotes(
   note: any,
+  limit: number = 3,
   fields: string[] = ['id', 'title', 'body'],
-  tokens: Map<string, EmbeddableNote> = new Map<string, EmbeddableNote>(),
-  limit: number = 3
+  tokens: Map<string, EmbeddableNote> = new Map<string, EmbeddableNote>()
 ): Promise<Map<string, EmbeddableNote>> {
   let cache: JoplinNote[] = [];
 
@@ -39,7 +39,7 @@ export default async function fetchEmbeddableNotes(
     t: Map<string, EmbeddableNote>,
     depth: number = 0
   ): Promise<Map<string, EmbeddableNote>> {
-    if (!n || depth > limit) return t;
+    if (!n || (limit && depth >= limit)) return t;
 
     const content = fenceOnly ? getEmbeddableContentFenced(n.body) : getEmbeddableContent(n.body);
     const result = parseTokens(content, prefix, suffix);

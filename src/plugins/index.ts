@@ -110,7 +110,7 @@ export default class App {
 
   getEmbeddedContent = async (): Promise<Map<string, Object>> => {
     const note = await joplin.workspace.selectedNote();
-    const notes = await fetchEmbeddableNotes(note);
+    const notes = await fetchEmbeddableNotes(note, await this.setting<number>('recursionDepth'));
     const embeds = Object.fromEntries(notes);
     const tokens = new Map<string, Object>();
 
@@ -164,7 +164,7 @@ export default class App {
       return result;
     }
 
-    const notes = await fetchEmbeddableNotes(note);
+    const notes = await fetchEmbeddableNotes(note, await this.setting<number>('recursionDepth'));
     result.hide = notes.size === 0;
 
     if (isPanel || !result.hide)
@@ -250,7 +250,7 @@ export default class App {
         const note = (await joplin.workspace.selectedNote()) as JoplinNote;
         if (!note) return;
 
-        const embeddings = await fetchEmbeddableNotes(note);
+        const embeddings = await fetchEmbeddableNotes(note, await this.setting<number>('recursionDepth'));
         if (!embeddings) return;
 
         const title = `${note.title}${await this.setting<string>('newNoteTitle')}`;
