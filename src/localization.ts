@@ -24,8 +24,6 @@ interface AppLocalization {
   setting__showIcon: string;
   setting__showIcon__description: string;
 
-  setting__showResources: string;
-  setting__showResources__description: string;
   setting__newNoteTitle: string;
   setting__newNoteTitle__description: string;
 
@@ -75,11 +73,9 @@ const defaultStrings: AppLocalization = {
   setting__showIcon: 'Joplin icon',
   setting__showIcon__description: 'Display Joplin link icon next to embedded links.',
 
-  setting__showResources: 'Show resources',
-  setting__showResources__description:
-    'Render embedded resources in referenced content. This setting is experimental and may cause issues.',
   setting__newNoteTitle: 'Embedded title',
-  setting__newNoteTitle__description: 'Text to appened to note titles when creating a new note with embedded content. (Default:  - Embed)',
+  setting__newNoteTitle__description:
+    'Text to appened to note titles when creating a new note with embedded content. (Default:  - Embed)',
 
   setting__listHeader: 'List header',
   setting__listHeader__description: 'Header text for the embedded links section. (default: Embeddings)',

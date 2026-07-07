@@ -149,17 +149,6 @@ export default class AppSettings {
         value: true,
       },
 
-      showResources: {
-        public: true,
-        section: SETTINGS_SECTION_NAME,
-        storage: SettingStorage.File,
-        label: localization.setting__showResources,
-        description: localization.setting__showResources__description,
-        type: SettingItemType.Bool,
-        value: false,
-        advanced: true,
-      },
-
       newNoteTitle: {
         public: true,
         section: SETTINGS_SECTION_NAME,

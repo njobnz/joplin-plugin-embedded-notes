@@ -11,7 +11,6 @@ export interface PluginSettings {
   listType: EmbeddedLinksType;
   showPanel: boolean;
   showIcon: boolean;
-  showResources: boolean;
   newNoteTitle: string;
   listHeader: string;
   listDelimiter: string;
