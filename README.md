@@ -8,8 +8,8 @@ A plugin for Joplin that enables referencing content from other notes using plac
 
 ## Usage
 
-> [!CAUTION]  
-> *Using the [Rich Text](https://joplinapp.org/help/apps/rich_text_editor/) editor will overwrite all tokens with embedded content when saving documents. **To preserve tokens, always use the Markdown editor.***
+> [!CAUTION]
+> _The [Rich Text](https://joplinapp.org/help/apps/rich_text_editor/) editor is not supported and will corrupt tokens. **Always use the Markdown editor with this plugin!**_
 
 ### Referencing Notes
 
@@ -26,9 +26,6 @@ Alternatively, reference a note using its ID:
 ```text
 %^4a7fbc2e5d9a36e10cf8b4d7ea12c390^%
 ```
-
-> [!NOTE]  
-> *Attachments (images, videos, audio, and PDFs) are not rendered by default. To enable rendering, activate **Show resources** under **Show Advanced Settings**. This setting is experimental and may cause display issues.*
 
 ### Code Blocks
 
@@ -52,9 +49,6 @@ With this setting enabled, add the following headers within fenced code blocks t
 ```
 ````
 
-> [!CAUTION]
-> *This mode provides limited support for the [Rich Text](https://joplinapp.org/help/apps/rich_text_editor/) editor. Tokens may be overridden when editing the document. **Using the Markdown editor is strongly encouraged.***
-
 ### Embedded Links
 
 A list of embedded note titles with links to the original notes can be displayed with the following options.
@@ -66,7 +60,13 @@ Links can also be displayed in a separate panel. This can be enabled through the
 
 ### Filtering Notes
 
-The **Tag filter** ***restricts named tokens*** to notes with the specified tag. Notes without this tag can still be accessed using their unique IDs.
+The **Tag filter** ***restricts named tokens*** to notes with the specified tag.
+
+```text
+tagname
+```
+
+Only notes with the tag `tagname` are available for embedding using their note titles. Notes without this tag can still be accessed using their unique IDs.
 
 Generic search queries are also supported. For example:
 
@@ -120,12 +120,12 @@ To avoid ambiguous token matches, it is recommended to use distinct character se
 | List style       | Ordered List | Display embedded links as new lines, ordered, or unordered list.                                                  |
 | Display panel    | No           | Display embedded links in a separate panel.                                                                       |
 | Joplin icon      | Yes          | Display Joplin link icon next to embedded links.                                                                  |
-| Show resources   | No           | Render embedded resources in referenced content. *This setting is experimental and may cause issues.*             |
 | Embedded title   |  - Embed     | Text to appened to note titles when creating a new note with embedded content.                                    |
 | List header      | Embeddings   | Header text for the embedded links section.                                                                       |
 | List delimiter   | \\n          | Defines a custom delimiter to separate embedded links when the "New Line" list style is selected.                 |
+| Recursion depth  | 3            | Maximum depth to search for nested tokens within embedded notes.                                                  |
 | Panel stylesheet |              | Path to custom CSS for styling the embedded links panel.                                                          |
-| Disable text     |              | Use this text to prevent token replacement in a note. (Default: \<!-- embedded-notes-disable -->)                 |
+| Disable text     |              | Use this text to prevent token replacement in a note. (default: \<!-- embedded-notes-disable -->)                 |
 
 ## Installation
 
@@ -144,9 +144,9 @@ To avoid ambiguous token matches, it is recommended to use distinct character se
 
 ## Known issues and limitations
 
-- **Mobile Support:** Limited to [creating new notes with embedded content](#generate-note) and does not support immediate token replacement.
-- **Rendering Tokens:** Tokens may not update immediately when switching between notes or upon loading the application. Editing the note or quickly switching between notes will trigger the tokens to render.
-- **Token Naming:** Token names cannot contain the character sequence reserved for the opening and closing tags, or have spaces at the beginning or end. Use note ID tokens to reference notes with titles that include reserved characters.
+### Token Naming
+
+- **Reserved Characters:** Token names cannot contain the character sequence reserved for the opening and closing tags, or have spaces at the beginning or end. Use note ID tokens to reference notes with titles that include reserved characters.
 - **Duplicate Titles:** Only the first note found with a duplicate title is used. To avoid ambiguity, reference notes with duplicate titles using their unique note ID.
 
 ## Acknowledgments
