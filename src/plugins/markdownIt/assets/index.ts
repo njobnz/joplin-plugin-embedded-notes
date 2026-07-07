@@ -76,27 +76,54 @@ export class EmbeddedNotes {
     const embeds = await this.fetchEmbeddedContent();
     if (!embeds) return;
 
+    await this.insertEmbeddedContentFenced(embeds);
+    this.insertEmbeddedContentBody(embeds);
+  }
+
+  async insertEmbeddedContentFenced(embeds: Object) {
+    const content = document.getElementById(this.contentId);
+    if (!content) return;
+
     const fences = Array.from(content.querySelectorAll(`.${EMBEDDED_NOTES_FENCE_EL}`));
     for (const fence of fences) {
-      const pre = fence.querySelector('.joplin-source');
-      if (!pre) return;
+      let pre = fence.querySelector('.joplin-source');
+      if (!pre) continue;
 
-      const body = Array.from(pre.childNodes)
-        .filter(n => n.nodeType === Node.TEXT_NODE)
-        .map(n => n.textContent)
-        .join('');
+      const prefix = pre.getAttribute('data-joplin-source-open')?.replace(/&NewLine;+$/, '');
+      const suffix = pre.getAttribute('data-joplin-source-close');
+
+      const body =
+        pre.textContent ||
+        Array.from(pre.childNodes)
+          .filter(n => n.nodeType === Node.TEXT_NODE)
+          .map(n => n.textContent)
+          .join('');
 
       let text: string = body;
       for (const [_, embed] of Object.entries(embeds)) {
         text = text.replace(new RegExp(escapeRegExp(embed.info.token), 'g'), embed.text);
       }
 
-      while (pre.nextSibling) {
-        pre.nextSibling.remove();
-      }
+      const html = await this.fetchRenderMarkup(prefix + text + suffix);
+      const doc = new DOMParser().parseFromString(html, 'text/html');
 
-      pre.insertAdjacentHTML('afterend', '<pre class="hljs"><code>' + text + '</code></pre>');
+      const el = doc.body.firstElementChild;
+      if (!el) continue;
+
+      el.className = fence.className;
+
+      fence.replaceWith(el);
+
+      pre = el.querySelector('.joplin-source');
+      if (!pre) continue;
+
+      pre.textContent = body;
     }
+  }
+
+  insertEmbeddedContentBody(embeds: Object) {
+    const content = document.getElementById(this.contentId);
+    if (!content) return;
 
     for (const [name, embed] of Object.entries(embeds)) {
       const placeholders = Array.from(content.querySelectorAll(`.${EMBEDDED_NOTES_TOKEN_EL}`)).filter(
