@@ -13,6 +13,7 @@ import {
   OPEN_NOTE_CMD,
   GET_DATA_CMD,
   GET_GLOBAL_VALUE_CMD,
+  RENDER_MARKUP_CMD,
 } from '../constants';
 import localization from '../localization';
 import escapeMarkdown from '../utils/escapeMarkdown';
@@ -91,6 +92,15 @@ export default class App {
         } catch (exception) {
           console.error('Cannot open note:', exception, message);
           return { error: 'Cannot open note:', exception, message };
+        }
+      case RENDER_MARKUP_CMD:
+        try {
+          if (message?.text == null) throw Error('Text is missing.');
+          const options = message?.options ? message.options : {};
+          return await this.renderer.render(message.text, options);
+        } catch (exception) {
+          console.error('Cannot render:', exception, message);
+          return { error: 'Cannot render:', exception, message };
         }
       default:
         console.error('Unknown command:', message);

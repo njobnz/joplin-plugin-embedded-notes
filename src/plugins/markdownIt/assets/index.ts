@@ -8,6 +8,7 @@ import {
   GET_EMBEDDED_CONTENT_CMD,
   GET_GLOBAL_VALUE_CMD,
   GET_SETTING_CMD,
+  RENDER_MARKUP_CMD,
   MARKDOWNIT_SCRIPT_ID,
 } from '../../../constants';
 import escapeRegExp from '../../../utils/escapeRegExp';
@@ -44,6 +45,14 @@ export class EmbeddedNotes {
     return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
       command: GET_SETTING_CMD,
       name,
+    });
+  }
+
+  async fetchRenderMarkup(text: string, options: object = {}): Promise<string> {
+    return await webviewApi.postMessage(MARKDOWNIT_SCRIPT_ID, {
+      command: RENDER_MARKUP_CMD,
+      text,
+      options,
     });
   }
 

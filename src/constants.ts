@@ -13,6 +13,7 @@ export const EMBEDDED_LINKS_PANEL_EL: string = 'embedded-notes-panel';
 export const EMBEDDED_NOTES_TOKEN_EL: string = 'embedded-notes-token';
 export const EMBEDDED_NOTES_FENCE_EL: string = 'embedded-notes-fence';
 
+export const RENDER_MARKUP_CMD: string = 'renderMarkup';
 export const GET_FILTERED_TOKENS_CMD: string = 'getFilteredTokens';
 export const GET_EMBEDDED_CONTENT_CMD: string = 'getEmbeddedContent';
 export const GET_EMBEDDED_LINKS_CMD: string = 'getEmbeddedLinks';
